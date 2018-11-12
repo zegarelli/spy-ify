@@ -1,0 +1,15 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Spy-ify Home</h1>
+  <p>Welcome to Spy-ify</p>
+  <h2>Dynamic content</h2>
+  <p>Spi-ify has the following record counts:</p>
+  <ul>
+    <li><strong>Users:</strong> {{ num_users }}</li>
+    <li><strong>Artists:</strong> {{ num_artists }}</li>
+    <li><strong>Albums:</strong> {{ num_albums }}</li>
+    <li><strong>Songs:</strong> {{ num_songs }}</li>
+    <li><strong>Plays:</strong> {{ num_plays }}</li>
+  </ul>
+{% endblock %}
