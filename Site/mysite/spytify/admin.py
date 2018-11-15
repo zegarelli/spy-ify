@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from django.contrib import admin
 
-from .models import Song, User, Album, Play, Artist
+from .models import Song, Album, Play, Artist
 
 
 class AlbumInLine(admin.TabularInline):
@@ -21,7 +21,7 @@ class PlayAdmin(admin.ModelAdmin):
     # inlines = [SongInLine]
 
 
-class UserAdmin(admin.ModelAdmin):
+class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('email', 'first_name', 'last_name', 'date_joined')
 
 
@@ -40,7 +40,6 @@ class AlbumAdmin(admin.ModelAdmin):
     inlines = [SongInLine]
 
 admin.site.register(Song, SongAdmin)
-admin.site.register(User, UserAdmin)
 admin.site.register(Play, PlayAdmin)
 admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Album, AlbumAdmin)

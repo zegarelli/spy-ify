@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 """------------------------------------------------------------
 -
 -   MODEL NAME: User
@@ -7,28 +7,28 @@ from django.db import models
 -   DESCRIPTION: Model representing a user profile
 -
 ------------------------------------------------------------"""
-class User(models.Model):
+# class UserProfile(models.Model):
 
     #****************************
     #         Members
     #****************************
-    user_id = models.AutoField(primary_key=True)
-    email = models.EmailField()
-    first_name = models.CharField(max_length=50, null=True, blank=True)
-    last_name = models.CharField(max_length=50, null=True, blank=True)
-    sex = models.CharField(max_length=50, null=True, blank=True)
-    birthday = models.DateField(null=True, blank=True)
-    date_joined = models.DateField(null=True, blank=True)
+    # user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # email = models.EmailField()
+    # first_name = models.CharField(max_length=50, null=True, blank=True)
+    # last_name = models.CharField(max_length=50, null=True, blank=True)
+    # sex = models.CharField(max_length=50, null=True, blank=True)
+    # birthday = models.DateField(null=True, blank=True)
+    # date_joined = models.DateField(null=True, blank=True)
 
-    """----------------------------------------------
-    - NAME: __str__()
-    -
-    - DESCRIPTION: standard Python class method to 
-    -              return a human-readable string for 
-    -              User object
-    ----------------------------------------------"""
-    def __str__(self):
-        return '{} {}: {}'.format(self.first_name, self.last_name, self.email)
+    # """----------------------------------------------
+    # - NAME: __str__()
+    # -
+    # - DESCRIPTION: standard Python class method to
+    # -              return a human-readable string for
+    # -              User object
+    # ----------------------------------------------"""
+    # def __str__(self):
+        # return '{} {}: {}'.format(self.first_name, self.last_name, self.email)
 
 """END class User"""
 

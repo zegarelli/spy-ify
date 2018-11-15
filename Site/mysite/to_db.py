@@ -21,14 +21,14 @@ dj = sqlite3.connect('db.sqlite3')
 c = dj.cursor()
 
 # Add Users to DB
-users = cursor.execute("SELECT * FROM users").fetchall()
-for n, user in enumerate(users):
-    try:
-        c.execute("INSERT INTO spytify_user VALUES (?,?,?,?,?,?,?)",
-              (n+1, user[2], user[0], user[1], '1993-06-09', '1993-06-09', 'M'))
-        dj.commit()
-    except Exception as e:
-        print(e)
+# users = cursor.execute("SELECT * FROM users").fetchall()
+# for n, user in enumerate(users):
+#     try:
+#         c.execute("INSERT INTO spytify_user VALUES (?,?,?,?,?,?,?)",
+#               (n+1, user[2], user[0], user[1], '1993-06-09', '1993-06-09', 'M'))
+#         dj.commit()
+#     except Exception as e:
+#         print(e)
 
 # Add Artists to DB
 artists = cursor.execute("SELECT * FROM artists").fetchall()
