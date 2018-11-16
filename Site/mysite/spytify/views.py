@@ -1,7 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views import generic
+from django_tables2 import RequestConfig
 
 from spytify.models import User, Artist, Album, Song, Play
+from spytify.tables import PlayTable
+
 
 """------------------------------------------------------------
 -
@@ -30,3 +34,17 @@ def index(request):
     return render(request, 'index.html', context=context)
 
 """END def index"""
+
+"""------------------------------------------------------------
+-
+-   MODEL NAME: UserDetailView
+-
+-   DESCRIPTION: View function for user details of site.
+-
+------------------------------------------------------------"""
+def UserDetailView(request, userid):
+    table = PlayTable( Play.objects.filter( user__user_id__contains = userid ) )
+    RequestConfig(request).configure(table)
+    return render( request, 'user_detail_table.html', { 'user':table } )
+
+"""END def UserDetailView"""

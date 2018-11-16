@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'spytify.apps.SpytifyConfig',
+    'django_tables2',
 ]
 
 MIDDLEWARE = [
