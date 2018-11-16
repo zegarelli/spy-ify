@@ -1,12 +1,14 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
 
-from spytify.models import Artist, Album, Song, Play
-
+from .models import Artist, Album, Song, Play
+from .forms import SignUpForm
 """------------------------------------------------------------
 -
--   MODEL NAME: index
+-   VIEW NAME: index
 -
 -   DESCRIPTION: View function for home page of site.
 -
@@ -31,3 +33,27 @@ def index(request):
     return render(request, 'index.html', context=context)
 
 """END def index"""
+
+"""------------------------------------------------------------
+-
+-   VIEW NAME: signup
+-
+-   DESCRIPTION: View function for users to signup for the site.
+-
+------------------------------------------------------------"""
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('index')
+    else:
+        form = SignUpForm()
+    return render(request, 'signup.html', {'form': form})
+
+"""END def signup"""
+
