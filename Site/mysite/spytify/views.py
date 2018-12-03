@@ -1,18 +1,13 @@
 from django.http import HttpResponse
-<<<<<<< HEAD
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-=======
-from django.shortcuts import render
 from django.views import generic
 from django_tables2 import RequestConfig
 
 from spytify.models import User, Artist, Album, Song, Play
 from spytify.tables import PlayTable
-
->>>>>>> 8d03a05c6a84e101ba269f4e983d06fadbc5c499
 
 from .models import Artist, Album, Song, Play
 from .forms import SignUpForm
@@ -46,7 +41,6 @@ def index(request):
 
 """------------------------------------------------------------
 -
-<<<<<<< HEAD
 -   VIEW NAME: signup
 -
 -   DESCRIPTION: View function for users to signup for the site.
@@ -68,7 +62,7 @@ def signup(request):
 
 """END def signup"""
 
-=======
+"""------------------------------------------------------------
 -   MODEL NAME: UserDetailView
 -
 -   DESCRIPTION: View function for user details of site.
@@ -80,4 +74,4 @@ def UserDetailView(request, userid):
     return render( request, 'user_detail_table.html', { 'user':table } )
 
 """END def UserDetailView"""
->>>>>>> 8d03a05c6a84e101ba269f4e983d06fadbc5c499
+
