@@ -1,6 +1,6 @@
 import django_tables2 as tables
 
-from spytify.models import User, Artist, Album, Song, Play
+from .models import User, Artist, Album, Song, Play
 
 """------------------------------------------------------------
 -

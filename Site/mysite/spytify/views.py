@@ -6,8 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views import generic
 from django_tables2 import RequestConfig
 
-from spytify.models import User, Artist, Album, Song, Play
-from spytify.tables import PlayTable
+from .tables import PlayTable
 
 from .models import Artist, Album, Song, Play
 from .forms import SignUpForm
@@ -69,9 +68,9 @@ def signup(request):
 -
 ------------------------------------------------------------"""
 def UserDetailView(request, userid):
-    table = PlayTable( Play.objects.filter( user__user_id__contains = userid ) )
+    table = PlayTable(Play.objects.filter(user__id__contains=userid))
     RequestConfig(request).configure(table)
-    return render( request, 'user_detail_table.html', { 'user':table } )
+    return render(request, 'user_detail_table.html', {'user':table})
 
 """END def UserDetailView"""
 
