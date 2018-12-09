@@ -37,6 +37,7 @@ def tracks(email, term):
                                        client_secret=client_secret, redirect_uri=redirect_uri,
                                        cache_path=r'spotify_api/token_cache/')
     sp = spotipy.Spotify(auth=token)
+    user = sp.current_user()
     return sp.current_user_top_tracks(time_range=term, limit=50)
 
 

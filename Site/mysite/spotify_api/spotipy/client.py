@@ -816,6 +816,19 @@ class Spotify(object):
         trid = self._get_id('track', track_id)
         return self._get('audio-analysis/' + trid)
 
+    def devices(self):
+        ''' Get a list of user's available devices.
+        '''
+        return self._get("me/player/devices")
+
+    def current_playback(self, market = None):
+        ''' Get information about user's current playback.
+
+            Parameters:
+                - market - an ISO 3166-1 alpha-2 country code.
+        '''
+        return self._get("me/player", market = market)
+
     def audio_features(self, tracks=[]):
         ''' Get audio features for one or multiple tracks based upon their Spotify IDs
             Parameters:
