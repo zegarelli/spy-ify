@@ -2,14 +2,32 @@
 
 {% block content %}
   <h1>Spy-ify Home</h1>
-  <p>Welcome to Spy-ify</p>
-  <h2>Dynamic content</h2>
+    {% if user.is_authenticated %}
+	    <p>Welcome, <strong>{{ user.username.upper }}</strong>.</p>
+	    <p>See all of my <a href="user/{{user.id}}">Plays</a></p>
+
+		<h2>{{user.username}} Totals</h2>
+		  <ol>
+
+		    {% for song, plays in user_songs %}
+			  <li>{{song}} - {{plays}}</li>
+		    {% endfor %}
+		  </ol>
+
+	{% else %}
+	        <p>Welcome, you're not currently logged in.<br>
+	        <a href="{% url 'login' %}">Login</a><br>
+	        <a href="{% url 'signup' %}">Sign Up</a></p>
+    {% endif %}
+
+
+  <h2>Site Totals</h2>
   <p>Spi-ify has the following record counts:</p>
   <ul>
-    <li><strong>Users:</strong> {{ num_users }}</li>
-    <li><strong>Artists:</strong> {{ num_artists }}</li>
-    <li><strong>Albums:</strong> {{ num_albums }}</li>
-    <li><strong>Songs:</strong> {{ num_songs }}</li>
-    <li><strong>Plays:</strong> {{ num_plays }}</li>
+    <li><strong>Site Users:</strong> {{ num_users }}</li>
+    <li><strong>Total Plays:</strong> {{ num_plays }}</li>
+    <li><strong>Unique Songs:</strong> {{ num_songs }}</li>
+    <li><strong>Unique Artists:</strong> {{ num_artists }}</li>
+    <li><strong>Unique Albums:</strong> {{ num_albums }}</li>
   </ul>
 {% endblock %}
