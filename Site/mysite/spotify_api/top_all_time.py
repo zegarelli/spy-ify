@@ -10,7 +10,7 @@ def artists(email, term):
             - time_range - Over what time frame are the affinities computed
               Valid-values: short_term, medium_term, long_term
     """
-    redirect_uri = 'http://localhost:8888/callback'
+    redirect_uri = 'http://192.168.1.132:8000/spytify'
     client_id = 'd85350c3c35449d987db695a8e5a819b'
     client_secret = '516a6cd7008b4c3f8aa41d800a2415a0'
     scopes = 'user-read-currently-playing user-library-read user-read-recently-played user-read-playback-state'
@@ -29,7 +29,7 @@ def tracks(email, term):
                 - time_range - Over what time frame are the affinities computed
                   Valid-values: short_term, medium_term, long_term
     """
-    redirect_uri = 'http://localhost:8888/callback'
+    redirect_uri = 'http://192.168.1.132:8000/spytify'
     client_id = 'd85350c3c35449d987db695a8e5a819b'
     client_secret = '516a6cd7008b4c3f8aa41d800a2415a0'
     scopes = 'user-read-currently-playing user-library-read user-read-recently-played user-read-playback-state'
