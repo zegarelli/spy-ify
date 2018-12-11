@@ -25,7 +25,7 @@ SECRET_KEY = '$m=6$spqg910mhf49p8icau4=yn2*n*$7x--tm@pzel^umy^=9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.132']
+ALLOWED_HOSTS = ['192.168.1.132', '136.33.134.191', 'spyify.duckdns.org', 'spy-ify.duckdns.org','spi-ify.com']
 
 
 # Application definition

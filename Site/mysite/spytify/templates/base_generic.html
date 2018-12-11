@@ -20,6 +20,9 @@
           {% if user.is_authenticated %}
           <li><a href="{% url 'top_all_time' %}">All Time</a></li>
           <li><a href="{% url 'logout' %}">Logout</a></li>
+          <li><a href="https://accounts.spotify.com/authorize/?client_id=d85350c3c35449d987db695a8e5a819b&response_type=code&redirect_uri=http://spyify.duckdns.org/spytify&scope=user-modify-playback-state%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-top-read">
+	Update Credentials
+	</a></li>
           {% else %}
           <li><a href="{% url 'login' %}">Login</a></li>
           <li><a href="{% url 'signup' %}">Sign Up</a></li>

@@ -1,0 +1,5 @@
+# to start the server
+sudo python3 manage.py runserver 192.168.1.132:80
+
+# if "Port is already in use" error then run
+sudo service apache2 stop
