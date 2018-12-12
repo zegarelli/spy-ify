@@ -109,7 +109,7 @@ def signup(request):
 def UserDetailView(request, userid):
     table = PlayTable(Play.objects.filter(user__id__contains=userid))
     RequestConfig(request).configure(table)
-    return render(request, 'user_detail_table.html', {'user':table})
+    return render(request, 'user_detail_table.html', {'user': table})
 
 """END def UserDetailView"""
 

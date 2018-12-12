@@ -14,6 +14,6 @@ class PlayTable(tables.Table):
     class Meta:
         model = Play
         template_name = 'django_tables2/bootstrap4.html'
-        fields = ('time_stamp', 'song', 'device')
+        fields = ('play_id', 'time_stamp', 'song', 'device')
 
 """END class PlayTable"""
