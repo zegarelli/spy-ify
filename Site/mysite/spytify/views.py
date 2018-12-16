@@ -12,6 +12,8 @@ from .tables import PlayTable
 from .models import Artist, Album, Song, Play, User
 from .forms import SignUpForm
 
+import spotify_api.spotipy.oauth2 as oauth
+
 import utils
 """------------------------------------------------------------
 -
@@ -112,4 +114,24 @@ def UserDetailView(request, userid):
     return render(request, 'user_detail_table.html', {'user': table})
 
 """END def UserDetailView"""
+
+"""------------------------------------------------------------
+-   MODEL NAME: authedView
+-
+-   DESCRIPTION: View function for when the user has authorized the app
+-
+------------------------------------------------------------"""
+def authedView(request, userid):
+    redirect_uri = 'http://192.168.1.132:8000/spytify'
+    client_id = 'd85350c3c35449d987db695a8e5a819b'
+    client_secret = '516a6cd7008b4c3f8aa41d800a2415a0'
+    scopes = 'user-read-currently-playing user-library-read user-read-recently-played user-read-playback-state user-top-read'
+    
+    oAuth2 = oauth.SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri, cache_path=r'spotify_api/token_cache/')
+    code = oAuth2.parse_response_code(request)
+    token_info = oAuth2.get_access_token(code)
+    _save_token_info(token_info)
+    return render(request, 'authed.html')
+
+"""END def authedView"""
 

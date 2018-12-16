@@ -124,6 +124,7 @@ class SpotifyOAuth(object):
         ''' Gets a cached auth token
         '''
         token_info = None
+        
         if self.cache_path:
             try:
                 f = open(self.cache_path)
