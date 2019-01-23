@@ -6,10 +6,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views import generic
 from django_tables2 import RequestConfig
 from django.db import connection
+from django.http import HttpResponseRedirect
 
 from .tables import PlayTable
 
-from .models import Artist, Album, Song, Play, User
+from .models import Artist, Album, Song, Play, UserToken
 from .forms import SignUpForm
 
 import spotify_api.spotipy.oauth2 as oauth
@@ -71,7 +72,13 @@ def index(request):
                     top_songs.append((name[0], plays))
                 if len(top_songs) == 5:
                     break
-        context['user_songs'] = top_songs
+            context['user_songs'] = top_songs
+
+        with connection.cursor() as cursor:
+            sp_authed = len(cursor.execute("""SELECT       *
+                                            FROM     spytify_usertoken
+                                            WHERE user_id = {}""".format(request.user.id)).fetchall())
+        context['sp_authed'] = sp_authed
 
 
     # Render the HTML template index.html with the data in the context variable
@@ -121,16 +128,22 @@ def UserDetailView(request, userid):
 -   DESCRIPTION: View function for when the user has authorized the app
 -
 ------------------------------------------------------------"""
-def authedView(request, userid):
-    redirect_uri = 'http://192.168.1.132:8000/spytify'
+def authedView(request):
+    # redirect_uri = 'http://127.0.0.1:8000/authed'
+    redirect_uri = 'http://spyify.duckdns.org/authed'
     client_id = 'd85350c3c35449d987db695a8e5a819b'
     client_secret = '516a6cd7008b4c3f8aa41d800a2415a0'
     scopes = 'user-read-currently-playing user-library-read user-read-recently-played user-read-playback-state user-top-read'
     
     oAuth2 = oauth.SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri, cache_path=r'spotify_api/token_cache/')
-    code = oAuth2.parse_response_code(request)
-    token_info = oAuth2.get_access_token(code)
-    _save_token_info(token_info)
+
+    token_info = oAuth2.get_access_token(request.GET['code'])
+    user = request.user
+    user_token = UserToken(user=user, access_token=token_info['access_token'], token_type=token_info['token_type'],
+                           expires_in=token_info['expires_in'], scope=token_info['scope'],
+                           expires_at=token_info['expires_at'], refresh_token=token_info['refresh_token'])
+    user_token.save()
+    oAuth2.save_token_info(token_info)
     return render(request, 'authed.html')
 
 """END def authedView"""

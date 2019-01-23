@@ -2,35 +2,25 @@ from django.db import models
 from django.contrib.auth.models import User
 """------------------------------------------------------------
 -
--   MODEL NAME: User
+-   MODEL NAME: UserToken
 -
--   DESCRIPTION: Model representing a user profile
+-   DESCRIPTION: Model representing a user's Spotify Token
 -
 ------------------------------------------------------------"""
-# class UserProfile(models.Model):
+class UserToken(models.Model):
 
-    #****************************
+    # ****************************
     #         Members
-    #****************************
-    # user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # email = models.EmailField()
-    # first_name = models.CharField(max_length=50, null=True, blank=True)
-    # last_name = models.CharField(max_length=50, null=True, blank=True)
-    # sex = models.CharField(max_length=50, null=True, blank=True)
-    # birthday = models.DateField(null=True, blank=True)
-    # date_joined = models.DateField(null=True, blank=True)
+    # ****************************
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    access_token =  models.CharField(max_length=200, null=True, blank=True)
+    token_type = models.CharField(max_length=50, null=True, blank=True)
+    expires_in = models.IntegerField(null=True, blank=True)
+    scope = models.CharField(max_length=200, null=True, blank=True)
+    expires_at = models.IntegerField(null=True, blank=True)
+    refresh_token = models.CharField(max_length=200, null=True, blank=True)
 
-    # """----------------------------------------------
-    # - NAME: __str__()
-    # -
-    # - DESCRIPTION: standard Python class method to
-    # -              return a human-readable string for
-    # -              User object
-    # ----------------------------------------------"""
-    # def __str__(self):
-        # return '{} {}: {}'.format(self.first_name, self.last_name, self.email)
-
-"""END class User"""
+"""END class UserToken"""
 
 """------------------------------------------------------------
 -

@@ -3,6 +3,16 @@
 {% block content %}
   <h1>Spy-ify Home</h1>
     {% if user.is_authenticated %}
+        {% if not sp_authed %}
+			<p style="color:red">Spy-ify is not currently Authorized to access your Spotify Listening
+			<a href="https://accounts.spotify.com/authorize/?client_id=d85350c3c35449d987db695a8e5a819b&response_type=code&redirect_uri=http://spyify.duckdns.org/authed&scope=user-modify-playback-state%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-top-read">
+			Authorize App
+			</a>
+			</p>
+
+		{% endif %}
+
+
 	    <p>Welcome, <strong>{{ user.username.upper }}</strong>.</p>
 	    <p>See all of my <a href="user/{{user.id}}">Plays</a></p>
 

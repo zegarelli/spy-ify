@@ -4,14 +4,18 @@ import sqlite3
 dj = sqlite3.connect('db.sqlite3')
 c = dj.cursor()
 
+m = c.execute("""SELECT       *
+                FROM     spytify_usertoken
+                WHERE user_id = {}""".format(2)).fetchall()
 
-c.execute("""SELECT       song_id,
-             COUNT(song_id) AS value_occurrence
-    FROM     spytify_play
-    WHERE user_id = 1
-    GROUP BY song_id
-    ORDER BY value_occurrence DESC
-    LIMIT    60;""")
+
+# c.execute("""SELECT       song_id,
+#              COUNT(song_id) AS value_occurrence
+#     FROM     spytify_play
+#     WHERE user_id = 1
+#     GROUP BY song_id
+#     ORDER BY value_occurrence DESC
+#     LIMIT    60;""")
 
 # c.execute("""SELECT * FROM 'spytify_play' WHERE user_id = 1""")
 

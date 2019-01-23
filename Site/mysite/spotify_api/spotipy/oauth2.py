@@ -143,7 +143,7 @@ class SpotifyOAuth(object):
                 pass
         return token_info
 
-    def _save_token_info(self, token_info):
+    def save_token_info(self, token_info):
         if self.cache_path:
             try:
                 f = open(self.cache_path, 'w')
@@ -218,7 +218,7 @@ class SpotifyOAuth(object):
             raise SpotifyOauthError(response.reason)
         token_info = response.json()
         token_info = self._add_custom_values_to_token_info(token_info)
-        self._save_token_info(token_info)
+        self.save_token_info(token_info)
         return token_info
 
     def _normalize_scope(self, scope):
@@ -253,7 +253,7 @@ class SpotifyOAuth(object):
         token_info = self._add_custom_values_to_token_info(token_info)
         if not 'refresh_token' in token_info:
             token_info['refresh_token'] = refresh_token
-        self._save_token_info(token_info)
+        self.save_token_info(token_info)
         return token_info
 
     def _add_custom_values_to_token_info(self, token_info):
