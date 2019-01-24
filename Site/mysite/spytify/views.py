@@ -7,6 +7,7 @@ from django.views import generic
 from django_tables2 import RequestConfig
 from django.db import connection
 from django.http import HttpResponseRedirect
+from django.core import serializers
 
 from .tables import PlayTable
 
@@ -27,8 +28,9 @@ import utils
 def top(request):
     context = {}
     if request.user.pk:
+        token = UserToken.objects.get(user_id=request.user.pk).__dict__
         current_user = request.user
-        top = utils.get_top_all_time(current_user.email)
+        top = utils.get_top_all_time(current_user.email, token['access_token'])
         context = {**context, **top}
     return render(request, 'top_all_time.html', context=context)
 
