@@ -30,7 +30,7 @@ def top(request):
     if request.user.pk:
         token = UserToken.objects.get(user_id=request.user.pk).__dict__
         current_user = request.user
-        top = utils.get_top_all_time(current_user.email, token['access_token'])
+        top = utils.get_top_all_time(current_user, token)
         context = {**context, **top}
     return render(request, 'top_all_time.html', context=context)
 
