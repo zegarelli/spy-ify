@@ -168,6 +168,7 @@ class User:
                 for key in token.keys():
                     token_json[key] = token[key]
                 return token_json
+        return None
 
     def _is_token_expired(self):
         now = int(time.time())
@@ -190,8 +191,9 @@ def main(users_by_id, users):
             if user[0] not in users_by_id:
                 tokens = c.execute("SELECT * FROM spytify_usertoken").fetchall()
                 new_user = User(user)
-                users.append(new_user)
-                users_by_id[new_user.id] = new_user
+                if new_user.token:
+                    users.append(new_user)
+                    users_by_id[new_user.id] = new_user
 
         # Sort Users by who needs pinged next
         users.sort(key=lambda x: x.next_ping)
