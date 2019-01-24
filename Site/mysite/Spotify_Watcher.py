@@ -122,13 +122,13 @@ def mprint(text):
 
 
 class User:
-    def __init__(self, data):
+    def __init__(self, data, tokens=None):
         self.first = data[5]
         self.last = data[10]
         self.email = data[6]
         self.id = data[0]
         self.next_ping = 0
-        self.token = self.find_token()
+        self.token = self.find_token(tokens)
 
     def ping(self):
         if self.next_ping < time.time():
@@ -161,7 +161,7 @@ class User:
                     '    Next ping at {}'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + 60))))
                 mprint('')
 
-    def find_token(self):
+    def find_token(self, tokens):
         for token in tokens:
             if token['user_id'] == self.id:
                 token_json = {}
@@ -190,7 +190,7 @@ def main(users_by_id, users):
         for user in user_list:
             if user[0] not in users_by_id:
                 tokens = c.execute("SELECT * FROM spytify_usertoken").fetchall()
-                new_user = User(user)
+                new_user = User(user, tokens=tokens)
                 if new_user.token:
                     users.append(new_user)
                     users_by_id[new_user.id] = new_user
@@ -205,7 +205,6 @@ def main(users_by_id, users):
 
 
 if __name__ == '__main__':
-    global tokens
     conn = sqlite3.connect('db.sqlite3')
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
@@ -215,9 +214,10 @@ if __name__ == '__main__':
     users_by_id = {}
 
     for user in user_list:
-        new_user = User(user)
-        users.append(new_user)
-        users_by_id[new_user.id] = new_user
+        new_user = User(user, tokens=tokens)
+        if new_user.token:
+                users.append(new_user)
+                users_by_id[new_user.id] = new_user
 
     while True:
         # try:
