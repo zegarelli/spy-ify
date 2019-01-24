@@ -5,6 +5,7 @@ import calendar
 
 import spotify_api.spotipy as spotipy
 import spotify_api.spotipy.util as util
+import spotify_api.spotipy.oauth2 as oauth2
 
 
 def add_play_to_database(user_id, sp, currently_playing):
@@ -12,7 +13,7 @@ def add_play_to_database(user_id, sp, currently_playing):
     album_id = currently_playing['item']['album']['id']
     id = currently_playing['item']['id']
     device = currently_playing['device']['name']
-    
+
     # format the timestamp
     now = datetime.datetime.now()
     date = '{}/{}/{}'.format(str(now.month), str(now.day), str(now.year))
@@ -38,21 +39,21 @@ def add_song_to_database(sp, id, artist_id, album_id):
         f = sp.audio_features(id)[0]
         t = sp.track(id)
         if not f:
-            f={}
-            f['danceability']=''
-            f['energy']=''
-            f['key']=''
-            f['loudness']=''
-            f['mode']=''
-            f['speechiness']=''
-            f['acousticness']=''
-            f['instrumentalness']=''
-            f['liveness']=''
-            f['valence']=''
-            f['tempo']=''
-            f['type']=''
-            f['duration_ms']=''
-            f['time_signature']=''
+            f = {}
+            f['danceability'] = ''
+            f['energy'] = ''
+            f['key'] = ''
+            f['loudness'] = ''
+            f['mode'] = ''
+            f['speechiness'] = ''
+            f['acousticness'] = ''
+            f['instrumentalness'] = ''
+            f['liveness'] = ''
+            f['valence'] = ''
+            f['tempo'] = ''
+            f['type'] = ''
+            f['duration_ms'] = ''
+            f['time_signature'] = ''
         c.execute("""INSERT INTO spytify_song (song_id, artist_id_id, album_id_id, song_name, song_popularity,
                   danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness,
                   valence, tempo,type, duration_ms, time_signature) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
@@ -79,7 +80,7 @@ def add_song_to_database(sp, id, artist_id, album_id):
 
 
 def add_artist_to_database(sp, id):
-    if len(c.execute("SELECT * FROM spytify_artist WHERE artist_id=?", (id, )).fetchall()) == 0:
+    if len(c.execute("SELECT * FROM spytify_artist WHERE artist_id=?", (id,)).fetchall()) == 0:
         f = sp.artist(id)
         genres = ''
         for genre in f['genres']:
@@ -95,7 +96,7 @@ def add_artist_to_database(sp, id):
 
 
 def add_album_to_database(sp, id):
-    if len(c.execute("SELECT * FROM spytify_album WHERE album_id=?", (id, )).fetchall()) == 0:
+    if len(c.execute("SELECT * FROM spytify_album WHERE album_id=?", (id,)).fetchall()) == 0:
         f = sp.album(id)
         genres = ''
         for genre in f['genres']:
@@ -115,7 +116,7 @@ def add_album_to_database(sp, id):
 
 def mprint(text):
     print(text)
-    with open('Error_log.txt','a') as f:
+    with open('Error_log.txt', 'a') as f:
         f.write(str(text))
         f.write('\n')
 
@@ -127,39 +128,67 @@ class User:
         self.email = data[6]
         self.id = data[0]
         self.next_ping = 0
+        self.token = self.find_token()
 
     def ping(self):
         if self.next_ping < time.time():
-            redirect_uri = 'http://http://spyify.duckdns.org/spytify/'
+            redirect_uri = 'http://spyify.duckdns.org/spytify'
             client_id = 'd85350c3c35449d987db695a8e5a819b'
             client_secret = '516a6cd7008b4c3f8aa41d800a2415a0'
             scopes = 'user-read-currently-playing user-library-read user-read-recently-played user-read-playback-state'
-            token = util.prompt_for_user_token(self.email, scope=scopes, client_id=client_id,
-                                               client_secret=client_secret, redirect_uri=redirect_uri,
-                                                cache_path=r'spotify_api/token_cache/')
-            sp = spotipy.Spotify(auth=token)
+
+            if self._is_token_expired():
+                oauth = oauth2.SpotifyOAuth(client_id, client_secret, redirect_uri, scope=scopes)
+                self.token = oauth.refresh_access_token(self.token['refresh_token'])
+
+            sp = spotipy.Spotify(auth=self.token['access_token'])
             currently_playing = sp.current_playback()
             if currently_playing and (currently_playing['is_playing'] and currently_playing['item']):
                 seconds_remaining = (currently_playing['item']['duration_ms'] - currently_playing['progress_ms']) / 1000
                 add_play_to_database(self.id, sp, currently_playing)
                 self.next_ping = time.time() + seconds_remaining + 1
                 mprint('{}, {}: {}'.format(self.last, self.first, self.email))
-                mprint('    {} - {}'.format(currently_playing['item']['name'], currently_playing['item']['artists'][0]['name']))
-                mprint('    Next ping at {}'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + seconds_remaining))))
+                mprint('    {} - {}'.format(currently_playing['item']['name'],
+                                            currently_playing['item']['artists'][0]['name']))
+                mprint('    Next ping at {}'.format(
+                    time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + seconds_remaining))))
                 mprint('')
             else:
                 self.next_ping = time.time() + 60
                 mprint('{}, {}: {}'.format(self.last, self.first, self.email))
                 mprint('    Not Currently Playing, Waiting 60 Seconds To Try again.')
-                mprint('    Next ping at {}'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + 60))))
+                mprint(
+                    '    Next ping at {}'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + 60))))
                 mprint('')
-            
-def main(users_by_id):
+
+    def find_token(self):
+        for token in tokens:
+            if token['user_id'] == self.id:
+                token_json = {}
+                for key in token.keys():
+                    token_json[key] = token[key]
+                return token_json
+
+    def _is_token_expired(self):
+        now = int(time.time())
+        return self.token['expires_at'] - now < 60
+
+    def update_token_db(self):
+        data = self.token
+        c.execute("""UPDATE spytify_usertoken set 
+                    (access_token, token_type, expires_in, scope, expires_at, refresh_token) 
+                    WHERE VALUES (?,?,?,?,?,?)""",
+                  (data['access_token'], data['token_type'], data['expires_in'], data['scope'],
+                   data['expires_at'], data['refresh_token']))
+
+
+def main(users_by_id, users):
     while True:
         # Check for new users
         user_list = c.execute("SELECT * FROM auth_user").fetchall()
         for user in user_list:
             if user[0] not in users_by_id:
+                tokens = c.execute("SELECT * FROM spytify_usertoken").fetchall()
                 new_user = User(user)
                 users.append(new_user)
                 users_by_id[new_user.id] = new_user
@@ -174,26 +203,27 @@ def main(users_by_id):
 
 
 if __name__ == '__main__':
+    global tokens
     conn = sqlite3.connect('db.sqlite3')
+    conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    c.execute("SELECT * FROM auth_user")
-    user_list = c.fetchall()
+    tokens = c.execute("SELECT * FROM spytify_usertoken").fetchall()
+    user_list = c.execute("SELECT * FROM auth_user").fetchall()
     users = []
     users_by_id = {}
 
     for user in user_list:
-            new_user = User(user)
-            users.append(new_user)
-            users_by_id[new_user.id] = new_user
+        new_user = User(user)
+        users.append(new_user)
+        users_by_id[new_user.id] = new_user
 
     while True:
-        try:
-            main(users_by_id)
-        except Exception as e:
-            time.sleep(10)
-            mprint('Main Except:' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
-            mprint('  ' + str(e))
-            main(users_by_id)
-        
+        # try:
+        main(users_by_id, users)
+        # except Exception as e:
+        #     time.sleep(10)
+        #     mprint('Main Except:' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
+        #     mprint('  ' + str(e))
+        #     main(users_by_id)
 
     conn.close()
