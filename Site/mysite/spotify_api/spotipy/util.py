@@ -46,7 +46,7 @@ def prompt_for_user_token(username, scope=None, client_id = None,
         ''')
         raise spotipy.SpotifyException(550, -1, 'no credentials set')
 
-    sp_oauth = oauth2.SpotifyOAuth(client_id, client_secret, redirect_uri, 
+    sp_oauth = oauth2.SpotifyOAuth(client_id, client_secret, redirect_uri,
         scope=scope, cache_path="{}_cache-{}".format(cache_path, username))
 
     # try to get a valid token for this user, from the cache,
@@ -80,7 +80,7 @@ def prompt_for_user_token(username, scope=None, client_id = None,
             response = input("Enter the URL you were redirected to: ")
 
         print()
-        print() 
+        print()
 
         code = sp_oauth.parse_response_code(response)
         token_info = sp_oauth.get_access_token(code)
