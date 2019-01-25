@@ -1,7 +1,7 @@
 import spotify_api.spotipy as spotipy
 import spotify_api.spotipy.util as util
 
-redirect_uri = 'http://192.168.1.132:8000/spytify'
+redirect_uri = 'http://spyify.duckdns.org/spytify'
 client_id = 'd85350c3c35449d987db695a8e5a819b'
 client_secret = '516a6cd7008b4c3f8aa41d800a2415a0'
 scopes = 'user-read-currently-playing user-library-read user-read-recently-played user-read-playback-state user-top-read'

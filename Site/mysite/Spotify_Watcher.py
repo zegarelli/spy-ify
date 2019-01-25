@@ -2,11 +2,13 @@ import sqlite3
 import datetime
 import time
 import calendar
+import logging
 
 import spotify_api.spotipy as spotipy
 import spotify_api.spotipy.util as util
 import spotify_api.spotipy.oauth2 as oauth2
 
+logging.basicConfig(filename='watcher.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s')
 
 def add_play_to_database(user_id, sp, currently_playing):
     artist_id = currently_playing['item']['artists'][0]['id']
@@ -140,26 +142,25 @@ class User:
             if self._is_token_expired():
                 oauth = oauth2.SpotifyOAuth(client_id, client_secret, redirect_uri, scope=scopes)
                 self.token = oauth.refresh_access_token(self.token['refresh_token'])
+                self.update_token_db()
 
-            sp = spotipy.Spotify(auth=self.token['access_token'])
-            currently_playing = sp.current_playback()
-            if currently_playing and (currently_playing['is_playing'] and currently_playing['item']):
-                seconds_remaining = (currently_playing['item']['duration_ms'] - currently_playing['progress_ms']) / 1000
-                add_play_to_database(self.id, sp, currently_playing)
-                self.next_ping = time.time() + seconds_remaining + 1
+            try:
+                sp = spotipy.Spotify(auth=self.token['access_token'])
+
+                currently_playing = sp.current_playback()
+                if currently_playing and (currently_playing['is_playing'] and currently_playing['item']):
+                    seconds_remaining = (currently_playing['item']['duration_ms'] - currently_playing['progress_ms']) / 1000
+                    add_play_to_database(self.id, sp, currently_playing)
+                    self.next_ping = time.time() + seconds_remaining + 1
+                else:
+                    self.next_ping = time.time() + 60
+
                 mprint('{}, {}: {}'.format(self.last, self.first, self.email))
-                mprint('    {} - {}'.format(currently_playing['item']['name'],
-                                            currently_playing['item']['artists'][0]['name']))
                 mprint('    Next ping at {}'.format(
-                    time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + seconds_remaining))))
-                mprint('')
-            else:
+                    time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + self.next_ping))))
+            except Exception as e:
+                logging.exception("Exception while making spotify object")
                 self.next_ping = time.time() + 60
-                mprint('{}, {}: {}'.format(self.last, self.first, self.email))
-                mprint('    Not Currently Playing, Waiting 60 Seconds To Try again.')
-                mprint(
-                    '    Next ping at {}'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + 60))))
-                mprint('')
 
     def find_token(self, tokens):
         for token in tokens:
@@ -176,11 +177,14 @@ class User:
 
     def update_token_db(self):
         data = self.token
-        c.execute("""UPDATE spytify_usertoken set 
-                    (access_token, token_type, expires_in, scope, expires_at, refresh_token) 
-                    WHERE VALUES (?,?,?,?,?,?)""",
+
+        c.execute("""UPDATE spytify_usertoken 
+                        SET
+                        access_token = ? , token_type = ? , expires_in = ? , scope = ? , expires_at = ? , refresh_token = ?
+                        WHERE user_id = ?""",
                   (data['access_token'], data['token_type'], data['expires_in'], data['scope'],
-                   data['expires_at'], data['refresh_token']))
+                   data['expires_at'], data['refresh_token'], self.id))
+        conn.commit()
 
 
 def main(users_by_id, users):
@@ -220,12 +224,9 @@ if __name__ == '__main__':
                 users_by_id[new_user.id] = new_user
 
     while True:
-        # try:
-        main(users_by_id, users)
-        # except Exception as e:
-        #     time.sleep(10)
-        #     mprint('Main Except:' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
-        #     mprint('  ' + str(e))
-        #     main(users_by_id)
+        try:
+            main(users_by_id, users)
+        except Exception as e:
+            logging.exception("Exception occurred in main")
 
     conn.close()
