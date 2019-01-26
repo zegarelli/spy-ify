@@ -69,9 +69,10 @@ def index(request):
                                             LIMIT    50;""".format(request.user.id)).fetchall()
             top_songs = []
             for song, plays in user_songs:
-                name = cursor.execute("SELECT song_name from 'spytify_song' WHERE song_id = '{}'".format(song)).fetchone()
+                name = Song.objects.get(song_id=song)
+                # name = cursor.execute("SELECT * from 'spytify_song' WHERE song_id = '{}'".format(song)).fetchone()
                 if name:
-                    top_songs.append((name[0], plays))
+                    top_songs.append((name, plays))
                 if len(top_songs) == 5:
                     break
             context['user_songs'] = top_songs
