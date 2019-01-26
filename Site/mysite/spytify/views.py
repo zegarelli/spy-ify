@@ -117,12 +117,26 @@ def signup(request):
 -   DESCRIPTION: View function for user details of site.
 -
 ------------------------------------------------------------"""
-def UserDetailView(request, userid):
-    table = PlayTable(Play.objects.filter(user__id__contains=userid))
+def UserDetailView(request):
+    plays = Play.objects.filter(user=request.user.pk)
+    table = PlayTable(plays, order_by='-play_id')
     RequestConfig(request).configure(table)
     return render(request, 'user_detail_table.html', {'user': table})
 
 """END def UserDetailView"""
+
+"""------------------------------------------------------------
+-   MODEL NAME: UserFreeQueryView
+-
+-   DESCRIPTION: View function for user details of site.
+-
+------------------------------------------------------------"""
+def UserFreeQueryView(request):
+    plays = reversed(list(Play.objects.filter(user=request.user.pk))[-100:])
+    return render(request, 'plays.html', {'plays': plays})
+
+"""END def UserDetailView"""
+
 
 """------------------------------------------------------------
 -   MODEL NAME: authedView
