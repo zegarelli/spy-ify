@@ -151,13 +151,14 @@ class User:
                 if currently_playing and (currently_playing['is_playing'] and currently_playing['item']):
                     seconds_remaining = (currently_playing['item']['duration_ms'] - currently_playing['progress_ms']) / 1000
                     add_play_to_database(self.id, sp, currently_playing)
+                    mprint('{}, {}: {} - Currently Playing'.format(self.last, self.first, self.email))
                     self.next_ping = time.time() + seconds_remaining + 10
                 else:
                     self.next_ping = time.time() + 60
-
-                mprint('{}, {}: {}'.format(self.last, self.first, self.email))
+                    mprint('{}, {}: {}'.format(self.last, self.first, self.email))
+                
                 mprint('    Next ping at {}'.format(
-                    time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + self.next_ping))))
+                    time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(self.next_ping))))
             except Exception as e:
                 logging.exception("Exception while making spotify object")
                 self.next_ping = time.time() + 60

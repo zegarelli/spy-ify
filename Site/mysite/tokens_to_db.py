@@ -12,8 +12,11 @@ for user in users:
             file = open('{}{}'.format(cache_path, file))
             file = file.read()
             data = json.loads(file)
-            cursor.execute("""INSERT INTO spytify_usertoken (id, access_token, token_type, expires_in, scope, expires_at,
+            try:
+                cursor.execute("""INSERT INTO spytify_usertoken (id, access_token, token_type, expires_in, scope, expires_at,
                             refresh_token, user_id) VALUES (?,?,?,?,?,?,?,?)""",
                            (user[0], data['access_token'], data['token_type'], data['expires_in'], data['scope'],
                             data['expires_at'], data['refresh_token'], user[0]))
-            db.commit()
+                db.commit()
+            except Exception as e:
+                print(str(e))

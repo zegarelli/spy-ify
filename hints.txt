@@ -3,3 +3,7 @@ sudo python3 manage.py runserver 192.168.1.132:80
 
 # if "Port is already in use" error then run
 sudo service apache2 stop
+
+Find whatever is using port :80
+sudo netstat -lpn |greg :80
+kill <###> <---what ever the number of the process ID is. 
