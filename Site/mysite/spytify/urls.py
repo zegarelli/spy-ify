@@ -8,5 +8,5 @@ urlpatterns = [
     path('authed/', views.authedView, name='authed'),
     path('top_all_time/', views.top, name='top_all_time'),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('user/plays', views.UserDetailView, name='user-detail'),
+    path('user/plays', views.UserPlaysView, name='user-plays'),
 ]

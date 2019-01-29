@@ -113,18 +113,18 @@ def signup(request):
 """END def signup"""
 
 """------------------------------------------------------------
--   MODEL NAME: UserDetailView
+-   MODEL NAME: UserPlaysView
 -
--   DESCRIPTION: View function for user details of site.
+-   DESCRIPTION: View function for the users individual plays table.
 -
 ------------------------------------------------------------"""
-def UserDetailView(request):
+def UserPlaysView(request):
     plays = Play.objects.filter(user=request.user.pk)
     table = PlayTable(plays, order_by='-play_id')
     RequestConfig(request).configure(table)
-    return render(request, 'user_detail_table.html', {'user': table})
+    return render(request, 'user_plays_table.html', {'user': table})
 
-"""END def UserDetailView"""
+"""END def UserPlayslView"""
 
 """------------------------------------------------------------
 -   MODEL NAME: authedView
