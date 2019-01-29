@@ -9,5 +9,4 @@ urlpatterns = [
     path('top_all_time/', views.top, name='top_all_time'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('user/plays', views.UserDetailView, name='user-detail'),
-    path('plays/', views.UserFreeQueryView, name='plays'),
 ]
