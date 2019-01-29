@@ -127,19 +127,6 @@ def UserDetailView(request):
 """END def UserDetailView"""
 
 """------------------------------------------------------------
--   MODEL NAME: UserFreeQueryView
--
--   DESCRIPTION: View function for user details of site.
--
-------------------------------------------------------------"""
-def UserFreeQueryView(request):
-    plays = reversed(list(Play.objects.filter(user=request.user.pk))[-100:])
-    return render(request, 'plays.html', {'plays': plays})
-
-"""END def UserDetailView"""
-
-
-"""------------------------------------------------------------
 -   MODEL NAME: authedView
 -
 -   DESCRIPTION: View function for when the user has authorized the app
@@ -151,7 +138,7 @@ def authedView(request):
     client_id = 'd85350c3c35449d987db695a8e5a819b'
     client_secret = '516a6cd7008b4c3f8aa41d800a2415a0'
     scopes = 'user-read-currently-playing user-library-read user-read-recently-played user-read-playback-state user-top-read'
-    
+
     oAuth2 = oauth.SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri, cache_path=r'spotify_api/token_cache/')
 
     token_info = oAuth2.get_access_token(request.GET['code'])
