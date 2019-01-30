@@ -119,10 +119,21 @@ def signup(request):
 -
 ------------------------------------------------------------"""
 def UserPlaysView(request):
-    plays = Play.objects.filter(user=request.user.pk)
-    table = PlayTable(plays, order_by='-play_id')
-    RequestConfig(request).configure(table)
-    return render(request, 'user_plays_table.html', {'user': table})
+    # check if user is authenticated
+    if request.user.is_authenticated:
+        plays = Play.objects.filter(user=request.user.pk)
+        table = PlayTable(plays, order_by='-play_id')
+        context = {
+            'plays_table': table,
+            'user': request.user
+        }
+
+        RequestConfig(request).configure(table)
+
+        return render(request, 'user_plays_table.html', context=context)
+    else:
+        # redirect to the base page if we're not authenticated
+        return HttpResponseRedirect('/')
 
 """END def UserPlayslView"""
 
