@@ -1,0 +1,13 @@
+{% extends "base_generic.html" %}
+{% block content %}
+  <div style="margin-left:20px;margin-top:20px">
+  <h1>{{track}}</h1>
+		  <strong>Track Title: </strong>{{track.song_name}}
+		  <br><strong>Artist: </strong>{{track.artist_id}}
+		  <br><strong>Album: </strong>{{track.album_id}}
+		  <br><strong>Track Popularity: </strong>{{track.song_popularity}}
+		  <br><strong>Track Time Signature: </strong>{{track.time_signature}}
+		  <br><strong>Track Tempo [bpm]: </strong>{{track.tempo}}
+		  <br><strong>Track Energy: </strong>{{track.energy}}
+	      <br><strong>Spotify Link: </strong><a href="https://open.spotify.com/track/{{ track.pk }}">Link</a>
+{% endblock %}

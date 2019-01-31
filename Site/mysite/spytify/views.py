@@ -1,14 +1,9 @@
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
-from django.views import generic
 from django_tables2 import RequestConfig
 from django.db import connection
 from django.http import HttpResponseRedirect
-from django.core import serializers
-
 from .tables import PlayTable
 
 from .models import Artist, Album, Song, Play, UserToken
@@ -162,4 +157,12 @@ def authedView(request):
     return render(request, 'authed.html')
 
 """END def authedView"""
+
+def TrackDetailView(request, trackid):
+    context = {'user': request.user}
+    # track = Song.objects.get(pk=trackid)
+    context['track'] = Song.objects.get(pk=trackid)
+
+    return render(request, 'track.html', context=context)
+
 

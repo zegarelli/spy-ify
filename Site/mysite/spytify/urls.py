@@ -9,4 +9,5 @@ urlpatterns = [
     path('top_all_time/', views.top, name='top_all_time'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('user/plays', views.UserPlaysView, name='user-plays'),
+    path('track/<trackid>', views.TrackDetailView, name='track-detail'),
 ]
