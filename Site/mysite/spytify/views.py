@@ -12,15 +12,15 @@ from .forms import SignUpForm
 import spotify_api.spotipy.oauth2 as oauth
 
 import utils
-"""------------------------------------------------------------
--
--   VIEW NAME: top_all_time
--
--   DESCRIPTION: View function for users to view their all time
--                listening history from spotify's  v1/me/top
--                endpoint. 
-------------------------------------------------------------"""
+
+
 def top(request):
+    """
+    View function for users to view their all time listening history from spotify's v1/me/top endpoint.
+
+    :param request:
+    :return:
+    """
     context = {}
     if request.user.pk:
         token = UserToken.objects.get(user_id=request.user.pk).__dict__
@@ -29,15 +29,14 @@ def top(request):
         context = {**context, **top}
     return render(request, 'top_all_time.html', context=context)
 
-"""END def signup"""
-"""------------------------------------------------------------
--
--   VIEW NAME: index
--
--   DESCRIPTION: View function for home page of site.
--
-------------------------------------------------------------"""
+
 def index(request):
+    """
+    View function for home page of site.
+
+    :param request:
+    :return:
+    """
     # Generate counts of some of the main objects
     num_users   = User.objects.all().count()
     num_artists = Artist.objects.all().count()
@@ -82,16 +81,14 @@ def index(request):
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
 
-"""END def index"""
 
-"""------------------------------------------------------------
--
--   VIEW NAME: signup
--
--   DESCRIPTION: View function for users to signup for the site.
--
-------------------------------------------------------------"""
 def signup(request):
+    """
+    View function for users to signup for the site.
+
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -105,15 +102,15 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
 
-"""END def signup"""
 
-"""------------------------------------------------------------
--   MODEL NAME: UserPlaysView
--
--   DESCRIPTION: View function for the users individual plays table.
--
-------------------------------------------------------------"""
 def UserPlaysView(request):
+    """
+    View function for the users individual plays table.
+
+    :param request:
+    :return:
+    """
+
     # check if user is authenticated
     if request.user.is_authenticated:
         plays = Play.objects.filter(user=request.user.pk)
@@ -130,15 +127,16 @@ def UserPlaysView(request):
         # redirect to the base page if we're not authenticated
         return HttpResponseRedirect('/')
 
-"""END def UserPlayslView"""
 
-"""------------------------------------------------------------
--   MODEL NAME: authedView
--
--   DESCRIPTION: View function for when the user has authorized the app
--
-------------------------------------------------------------"""
 def authedView(request):
+    """
+    View function for when the user has authorized the app
+
+    This function parses the callback URL provided by spotify, and uses it to get the User's Token info
+
+    :param request:
+    :return:
+    """
     # redirect_uri = 'http://127.0.0.1:8000/authed'
     redirect_uri = 'http://spyify.duckdns.org/authed'
     client_id = 'd85350c3c35449d987db695a8e5a819b'
@@ -156,13 +154,31 @@ def authedView(request):
     oAuth2.save_token_info(token_info)
     return render(request, 'authed.html')
 
-"""END def authedView"""
 
 def TrackDetailView(request, trackid):
+    """
+    A view for gathering the data for an track's details page
+
+    :param request:
+    :param artistid:
+    :return:
+    """
     context = {'user': request.user}
-    # track = Song.objects.get(pk=trackid)
     context['track'] = Song.objects.get(pk=trackid)
 
     return render(request, 'track.html', context=context)
+
+def ArtistDetailView(request, artistid):
+    """
+    A view for gathering the data for an artist's details page
+
+    :param request:
+    :param artistid:
+    :return:
+    """
+    context = {'user': request.user}
+    context['artist'] = Artist.objects.get(pk=artistid)
+
+    return render(request, 'artist.html', context=context)
 
 

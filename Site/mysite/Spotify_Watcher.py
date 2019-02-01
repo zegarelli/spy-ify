@@ -124,6 +124,9 @@ def mprint(text):
 
 
 class User:
+    """
+    A class representing a User on the site
+    """
     def __init__(self, data, tokens=None):
         self.first = data[5]
         self.last = data[10]
@@ -133,6 +136,13 @@ class User:
         self.token = self.find_token(tokens)
 
     def ping(self):
+        """
+        A function to ask if the user is currently listening to anything on the site.
+
+        If the user is listening, add the play to the database. If not listening, change the User's time until next
+        ping to be 60 seconds from now.
+        :return:
+        """
         if self.next_ping < time.time():
             redirect_uri = 'http://spyify.duckdns.org/spytify'
             client_id = 'd85350c3c35449d987db695a8e5a819b'
@@ -164,6 +174,12 @@ class User:
                 self.next_ping = time.time() + 60
 
     def find_token(self, tokens):
+        """
+        A method to find a user's token from a dictionary of tokens
+
+        :param tokens: <dict> where key is user.pk
+        :return:
+        """
         for token in tokens:
             if token['user_id'] == self.id:
                 token_json = {}
@@ -173,6 +189,10 @@ class User:
         return None
 
     def _is_token_expired(self):
+        """
+        A method to check if the user's toke is expired
+        :return:
+        """
         now = int(time.time())
         return self.token['expires_at'] - now < 60
 
@@ -189,6 +209,13 @@ class User:
 
 
 def main(users_by_id, users):
+    """
+    This is the main watcher function. It tracks all of the users and pings them when needed.
+
+    :param users_by_id: <dict> a dictionary of user's where user.pk is the key
+    :param users: <list>  list of all users in the system
+    :return: None
+    """
     while True:
         # Check for new users
         user_list = c.execute("SELECT * FROM auth_user").fetchall()

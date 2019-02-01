@@ -1,17 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
-"""------------------------------------------------------------
--
--   MODEL NAME: UserToken
--
--   DESCRIPTION: Model representing a user's Spotify Token
--
-------------------------------------------------------------"""
-class UserToken(models.Model):
 
-    # ****************************
-    #         Members
-    # ****************************
+
+class UserToken(models.Model):
+    """
+    Model representing a user's Spotify Token
+    """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     access_token =  models.CharField(max_length=200, null=True, blank=True)
     token_type = models.CharField(max_length=50, null=True, blank=True)
@@ -20,50 +14,24 @@ class UserToken(models.Model):
     expires_at = models.IntegerField(null=True, blank=True)
     refresh_token = models.CharField(max_length=200, null=True, blank=True)
 
-"""END class UserToken"""
 
-"""------------------------------------------------------------
--
--   MODEL NAME: Artist
--
--   DESCRIPTION: Model representing a music artist on the service
--
-------------------------------------------------------------"""
 class Artist(models.Model):
-
-    #****************************
-    #         Members
-    #****************************
+    """
+    Model representing a music artist
+    """
     artist_id = models.CharField(max_length=50, primary_key=True)
     artist_name = models.CharField(max_length=100, null=True, blank=True)
     genres = models.CharField(max_length=100, null=True, blank=True)
     followers = models.IntegerField(null=True, blank=True)
     artist_popularity = models.IntegerField(null=True, blank=True)
 
-    """----------------------------------------------
-    - NAME: __str__()
-    -
-    - DESCRIPTION: standard Python class method to 
-    -              return a human-readable string for 
-    -              Artist object
-    ----------------------------------------------"""
     def __str__(self):
         return self.artist_name
 
-"""END class Artist"""
-
-"""------------------------------------------------------------
--
--   MODEL NAME: Album
--
--   DESCRIPTION: Model representing an album on the service
--
-------------------------------------------------------------"""
 class Album(models.Model):
-
-    #****************************
-    #         Members
-    #****************************
+    """
+    Model representing an album
+    """
     album_id = models.CharField(max_length=50, primary_key=True)
     album_name = models.CharField(max_length=100, null=True, blank=True)
     artist_id = models.ForeignKey(Artist, on_delete=models.CASCADE)
@@ -72,30 +40,13 @@ class Album(models.Model):
     album_type = models.CharField(max_length=100, null=True, blank=True)
     release_date = models.DateField(null=True, blank=True)
 
-    """----------------------------------------------
-    - NAME: __str__()
-    -
-    - DESCRIPTION: standard Python class method to 
-    -              return a human-readable string for 
-    -              Album object
-    ----------------------------------------------"""
     def __str__(self):
         return self.album_name
 
-"""END class Album"""
-
-"""------------------------------------------------------------
--
--   MODEL NAME: Song
--
--   DESCRIPTION: Model representing a song one can listen to
--
-------------------------------------------------------------"""
 class Song(models.Model):
-
-    #****************************
-    #         Members
-    #****************************
+    """
+    Model representing a spotify track
+    """
     song_id = models.CharField(max_length=50, primary_key=True)
     artist_id = models.ForeignKey(Artist, on_delete=models.CASCADE)
     album_id = models.ForeignKey(Album, on_delete=models.CASCADE)
@@ -116,45 +67,19 @@ class Song(models.Model):
     duration_ms = models.IntegerField(null=True, blank=True)
     time_signature = models.IntegerField(null=True, blank=True)
 
-    """----------------------------------------------
-    - NAME: __str__()
-    -
-    - DESCRIPTION: standard Python class method to 
-    -              return a human-readable string for 
-    -              Song object
-    ----------------------------------------------"""
     def __str__(self):
         return self.song_name
 
-"""END class Song"""
 
-"""------------------------------------------------------------
--
--   MODEL NAME: Play
--
--   DESCRIPTION: Model representing a play instance of a song
--                by a user.
--
-------------------------------------------------------------"""
 class Play(models.Model):
-
-    #****************************
-    #         Members
-    #****************************
+    """
+    Model representing a play instance of a song by a user
+    """
     play_id = models.BigAutoField(primary_key=True)
     time_stamp = models.CharField(max_length=50)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     device = models.CharField(max_length=50, null=True, blank=True)
 
-    """----------------------------------------------
-    - NAME: __str__()
-    -
-    - DESCRIPTION: standard Python class method to 
-    -              return a human-readable string for 
-    -              Play object
-    ----------------------------------------------"""
     def __str__(self):
         return '{} {}: {}'.format(self.time_stamp, self.user, self.song)
-
-"""END class Play"""

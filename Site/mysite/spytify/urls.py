@@ -10,4 +10,5 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('user/plays', views.UserPlaysView, name='user-plays'),
     path('track/<trackid>', views.TrackDetailView, name='track-detail'),
+    path('artist/<artistid>', views.ArtistDetailView, name='artist-detail'),
 ]
