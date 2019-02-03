@@ -4,7 +4,10 @@ import time
 import mysql.connector
 import json
 
+mydb = None
+
 def mysql_connection():
+    global mydb
     """
     Note: This requires .json with credentials to access jmoney.cash MySQL server.
     Replace who with given credentials.
@@ -13,16 +16,18 @@ def mysql_connection():
     who = "jax_auto"
     with open('auth.json') as f:
         cred = json.load(f)
-    mydb = mysql.connector.connect(
-        host=cred[who]['host'],
-        user=cred[who]['user'],
-        passwd=cred[who]['pass'],
-        database="spyify"
-    )
+    try:
+        mydb = mysql.connector.connect(
+            host=cred[who]['host'],
+            user=cred[who]['user'],
+            passwd=cred[who]['pass'],
+            database="spyify"
+        )
 
-    mycursor = mydb.cursor()
-
-    print('hi')
+        if mydb.is_connected():
+            print('Connected to MySQL database. Thank you for choosing Jmoney.Cash')
+    except EnvironmentError as e:
+        print(e)
 
 def dumb_string_2_epoch(dumb_string):
     string = dumb_string.split(' ')
@@ -59,7 +64,7 @@ def sqlite3_dumb():
         for col in cols:
             dicks[table_name]['table_col'][col[1]] = {
                 'name': col[1],
-                'datetype': col[2]
+                'datatype': col[2]
             }
         # sleep(1)
         table = cursor.execute("SELECT * from %s" % table_name).fetchall()
@@ -76,10 +81,29 @@ def mysql_table_maker(table):
     table['d']
 
 
+def transfer(table):
+    # Create Table
+    create_string = "CREATE TABLE " + table + ' ('
+    idx = 0
+    for col in data[table]['table_col']:
+        if idx != 0:
+            create_string += ', '
+        create_string += data[table]['table_col'][col]['name'] + ' ' + str.upper(data[table]['table_col'][col]['datatype'])
+        idx += 1
+    create_string += ');'
+    # Add Data
+    for row in data[table]['table_dat']:
+        print(row)
+
 mysql_connection()
+
+# mydb.cursor('SELECT * from test;')
 
 data = sqlite3_dumb()
 table_time_conv(data['spytify_play'])
+
+for table in data:
+    transfer(table)
 
 
 
