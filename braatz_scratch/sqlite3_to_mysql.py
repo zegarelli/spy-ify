@@ -5,6 +5,11 @@ import mysql.connector
 import json
 
 def mysql_connection():
+    """
+    Note: This requires .json with credentials to access jmoney.cash MySQL server.
+    Replace who with given credentials.
+    Request credentials from jmoney.cash admin.
+    """
     who = "jax_auto"
     with open('auth.json') as f:
         cred = json.load(f)
