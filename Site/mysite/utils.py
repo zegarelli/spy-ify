@@ -5,11 +5,24 @@ import time
 import spotify_api.spotipy.oauth2 as oauth2
 
 def _is_token_expired(token):
+    """
+    Function to check if the spotify token will be expired in the next minute
+
+    :param token: <dict> that contains the 'expired_at' key.
+    :return:
+    """
     now = int(time.time())
     return token['expires_at'] - now < 60
 
 
 def update_token_db(user, token):
+    """
+    Function to update the user's token info in the database
+
+    :param user:
+    :param token:
+    :return: None
+    """
     conn = sqlite3.connect('db.sqlite3')
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
@@ -25,6 +38,13 @@ def update_token_db(user, token):
 
 
 def get_top_all_time(user, token):
+    """
+    A function to get a user's top all time plays, and artists.
+
+    :param user:
+    :param token:
+    :return: <dict> of user's top tracks and top artists
+    """
     if _is_token_expired(token):
         redirect_uri = 'http://spyify.duckdns.org/spytify'
         client_id = 'd85350c3c35449d987db695a8e5a819b'

@@ -16,25 +16,29 @@
 	    <p>Welcome, <strong>{{ user.username.upper }}</strong>.</p>
 	    <p>See all of my <a href="user/plays">Plays</a></p>
 
-		<h2>{{user.username}} Totals</h2>
-			<table class="table" style="width:40%">
-			<thead>
-		      <tr>
-		        <th>Plays</th>
-		        <th>Song Title</th>
-		        <th>Artist</th>
-		      </tr>
-	        </thead>
-			{% for song, plays in user_songs %}
-			<tbody>
-				<tr>
-					<td>{{plays}}</td>
-					<td>{{song.song_name}}</td>
-					<td>{{song.artist_id}}</td>
-				</tr>
-			</tbody>
-	        {% endfor %}
-			</table>
+		<div class="row">
+			<div class="column">
+				<h2>{{user.username}} Top Songs</h2>
+					<table class="table" style="width:90%">
+					<thead>
+				      <tr>
+				        <th>Plays</th>
+				        <th>Song Title</th>
+				        <th>Artist</th>
+				      </tr>
+			        </thead>
+					{% for song, plays in user_songs %}
+					<tbody>
+						<tr>
+							<td>{{plays}}</td>
+							<td><a href="track/{{ song.pk }}">{{song.song_name}}</a></td>
+							<td>{{song.artist_id}}</td>
+						</tr>
+					</tbody>
+			        {% endfor %}
+					</table>
+			</div>
+		</div>
 
 	{% else %}
 	        <p>Welcome, you're not currently logged in.<br>
