@@ -181,4 +181,17 @@ def ArtistDetailView(request, artistid):
 
     return render(request, 'artist.html', context=context)
 
+def AlbumDetailView(request, albumid):
+    """
+    A view for gathering the data for an artist's details page
+
+    :param request:
+    :param artistid:
+    :return:
+    """
+    context = {'user': request.user}
+    context['album'] = Album.objects.get(pk=albumid)
+
+    return render(request, 'album.html', context=context)
+
 
