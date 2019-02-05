@@ -4,7 +4,7 @@ from django.contrib.auth import login, authenticate
 from django_tables2 import RequestConfig
 from django.db import connection
 from django.http import HttpResponseRedirect
-from .tables import PlayTable
+from .tables import PlayTable, TrackTable
 
 from .models import Artist, Album, Song, Play, UserToken
 from .forms import SignUpForm
@@ -165,6 +165,11 @@ def TrackDetailView(request, trackid):
     """
     context = {'user': request.user}
     context['track'] = Song.objects.get(pk=trackid)
+    table = Play.objects.filter(user_id=request.user).filter(song_id=trackid)
+    context['track_table'] = table
+    # context['track_table'] = TrackTable(table)
+
+    # RequestConfig(request).configure(table)
 
     return render(request, 'track.html', context=context)
 

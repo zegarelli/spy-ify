@@ -10,4 +10,19 @@
 		  <br><strong>Track Tempo [bpm]: </strong>{{track.tempo}}
 		  <br><strong>Track Energy: </strong>{{track.energy}}
 	      <br><strong>Spotify Link: </strong><a href="https://open.spotify.com/track/{{ track.pk }}">Link</a>
+
+	<h2>Your Plays of {{track}}</h2>
+	 <table>
+	    <tr>
+	        <th>Play ID</th>
+	        <th>Timestamp</th>
+	    </tr>
+	  {% for play in track_table %}
+	    <tr>
+	        <td>{{ play.play_id }}</td>
+	        <td>{{ play.time_stamp }}</td>
+	    </tr>
+	    {% endfor %}
+	</table>
+
 {% endblock %}
