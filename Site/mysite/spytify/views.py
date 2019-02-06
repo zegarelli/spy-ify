@@ -5,6 +5,9 @@ from django_tables2 import RequestConfig
 from django.db import connection
 from django.http import HttpResponseRedirect
 from .tables import PlayTable, TrackTable
+from django.http import JsonResponse
+from django.core import serializers
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Artist, Album, Song, Play, UserToken
 from .forms import SignUpForm
@@ -12,7 +15,7 @@ from .forms import SignUpForm
 import spotify_api.spotipy.oauth2 as oauth
 
 import utils
-
+import json
 
 def top(request):
     """
@@ -206,3 +209,16 @@ def AlbumDetailView(request, albumid):
     return render(request, 'album.html', context=context)
 
 
+"""------------------------------------------------------------
+-   MODEL NAME: example_query
+-
+-   DESCRIPTION: Endpoint function for example query
+-
+------------------------------------------------------------"""
+def example_query(request):
+    # VARS #
+
+    # PROC #
+    if request.method == 'POST':
+        return JsonResponse( {'cat_id': 3} )
+"""END def example_query"""

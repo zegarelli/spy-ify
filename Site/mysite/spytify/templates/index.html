@@ -1,7 +1,38 @@
 {% extends "base_generic.html" %}
 
+{% block loads %}
+    {% load static %}
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+            integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+            crossorigin="anonymous"></script>
+
+    <!-- Bootstrap -->
+        <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+        <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+        <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.1/css/mdb.min.css" rel="stylesheet">
+
+        <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.1/js/mdb.min.js"></script>
+
+    <!-- Local JS Files -->
+    <script type="text/javascript" src="{% static "js/index.js" %}"></script>
+{% endblock %}
+
+<form method="post">{{ csrf_input }}
+
 {% block content %}
+
   <h1>Spy-ify Home</h1>
+
     {% if user.is_authenticated %}
         {% if not sp_authed %}
 			<p style="color:red">Spy-ify is not currently Authorized to access your Spotify Listening
@@ -12,6 +43,7 @@
 
 		{% endif %}
 
+        <canvas id="lineChart"></canvas>
 
 	    <p>Welcome, <strong>{{ user.username.upper }}</strong>.</p>
 	    <p>See all of my <a href="user/plays">Plays</a></p>

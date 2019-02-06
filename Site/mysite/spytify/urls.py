@@ -12,4 +12,5 @@ urlpatterns = [
     path('track/<trackid>', views.TrackDetailView, name='track-detail'),
     path('artist/<artistid>', views.ArtistDetailView, name='artist-detail'),
     path('album/<albumid>', views.AlbumDetailView, name='album-detail'),
+    path('example_query/', views.example_query, name='example_query')
 ]
