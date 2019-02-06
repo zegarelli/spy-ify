@@ -1,5 +1,4 @@
-import spotipy
-import spotipy.util as util
+import spotify_api.spotipy
 import time
 
 redirect_uri = 'http://192.168.1.132/home.html'
@@ -8,9 +7,9 @@ client_secret = '516a6cd7008b4c3f8aa41d800a2415a0'
 # scopes = 'user-read-currently-playing user-library-read user-read-recently-played user-read-playback-state user-modify-playback-state'
 scopes = 'user-read-currently-playing user-read-recently-played user-read-playback-state user-modify-playback-state'
 
-token = util.prompt_for_user_token('prepxc@gmail.com', scope=scopes, client_id=client_id,
+token = spotify_api.spotipy.util.prompt_for_user_token('prepxc@gmail.com', scope=scopes, client_id=client_id,
                                                client_secret=client_secret, redirect_uri=redirect_uri)
-sp = spotipy.Spotify(auth=token)
+sp = spotify_api.spotipy.Spotify(auth=token)
 
 # token2 = util.prompt_for_user_token('westonw94@gmail.com', scope=scopes, client_id=client_id,
                                                # client_secret=client_secret, redirect_uri=redirect_uri)
