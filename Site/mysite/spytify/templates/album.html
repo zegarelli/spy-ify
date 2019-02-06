@@ -4,4 +4,21 @@
   <h1>{{album.artist_id}}: {{album}}</h1>
 	      <br><strong>Release Date: </strong> {{ album.release_date}}
 	      <br><strong>Spotify Link: </strong><a href="https://open.spotify.com/artist/{{ artist.pk }}">Link</a>
+
+	<h2>Your Plays of {{album}}</h2>
+	 <table>
+	    <tr>
+	        <th>Play ID</th>
+	        <th>Timestamp</th>
+	        <th>Track Title</th>
+	    </tr>
+	  {% for play in album_table %}
+	    <tr>
+	        <td>{{ play.play_id }}</td>
+	        <td>{{ play.time_stamp }}</td>
+	        <td>{{ play.song }}</td>
+	    </tr>
+	    {% endfor %}
+	</table>
+
 {% endblock %}

@@ -3,4 +3,22 @@
   <div style="margin-left:20px;margin-top:20px">
   <h1>{{artist}}</h1>
 	      <br><strong>Spotify Link: </strong><a href="https://open.spotify.com/artist/{{ artist.pk }}">Link</a>
+
+	<h2>Your Plays of {{artist}}</h2>
+	 <table>
+	    <tr>
+	        <th>Play ID</th>
+	        <th>Timestamp</th>
+	        <th>Track Title</th>
+	        <th>Album</th>
+	    </tr>
+	  {% for play in artist_table %}
+	    <tr>
+	        <td>{{ play.play_id }}</td>
+	        <td>{{ play.time_stamp }}</td>
+	        <td>{{ play.song }}</td>
+	        <td>{{ play.song.album_id }}</td>
+	    </tr>
+	    {% endfor %}
+	</table>
 {% endblock %}

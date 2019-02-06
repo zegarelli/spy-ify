@@ -165,7 +165,7 @@ def TrackDetailView(request, trackid):
     """
     context = {'user': request.user}
     context['track'] = Song.objects.get(pk=trackid)
-    table = Play.objects.filter(user_id=request.user).filter(song_id=trackid)
+    table = reversed(list(Play.objects.filter(user_id=request.user).filter(song_id=trackid)))
     context['track_table'] = table
     # context['track_table'] = TrackTable(table)
 
@@ -183,7 +183,10 @@ def ArtistDetailView(request, artistid):
     """
     context = {'user': request.user}
     context['artist'] = Artist.objects.get(pk=artistid)
-
+    table = reversed(list(Play.objects.filter(user_id=request.user).filter(song_id__artist_id=artistid)))
+    context['artist_table'] = table
+    # for item in table:
+    #     item
     return render(request, 'artist.html', context=context)
 
 def AlbumDetailView(request, albumid):
@@ -196,6 +199,9 @@ def AlbumDetailView(request, albumid):
     """
     context = {'user': request.user}
     context['album'] = Album.objects.get(pk=albumid)
+
+    table = reversed(list(Play.objects.filter(user_id=request.user).filter(song_id__album_id=albumid)))
+    context['album_table'] = table
 
     return render(request, 'album.html', context=context)
 
