@@ -63,12 +63,12 @@ def sqlite3_dumb():
             'table_dat': []
         }
         cols = cursor.execute("PRAGMA table_info(%s);" % table_name).fetchall()
-        for col in cols:
+        for idx, col in enumerate(cols):
             dicks[table_name]['table_col'][col[1]] = {
                 'name': col[1],
-                'datatype': col[2]
+                'datatype': col[2],
+                'id': idx
             }
-        # sleep(1)
         table = cursor.execute("SELECT * from %s" % table_name).fetchall()
         for row_dat in table:
             row_dat = list(row_dat)
@@ -85,6 +85,7 @@ def transfer(table):
     create_string = "CREATE TABLE " + table + ' ('
     idx = 0
     for col in data[table]['table_col']:
+
         #  Datatype Replacements
         if str.upper(data[table]['table_col'][col]['datatype']) == "":
             datatype = 'VARCHAR(20)'
@@ -101,9 +102,15 @@ def transfer(table):
         else:
             name = data[table]['table_col'][col]['name']
 
+        #  Character Set
+        if 'utf8' in data[table]['table_col'][col]:
+            character_set = ' CHARACTER SET utf8 COLLATE utf8_unicode_ci'
+        else:
+            character_set = ''
+
         if idx != 0:
             create_string += ', '
-        create_string += name + ' ' + datatype
+        create_string += name + ' ' + datatype + character_set
         idx += 1
     create_string += ');'
     print(create_string)
@@ -112,25 +119,55 @@ def transfer(table):
 
     # Add Data
     for row in data[table]['table_dat']:
-        add_string = 'INSERT INTO ' + table + ' VALUES ('
+        add_string = r'INSERT INTO ' + table + r' VALUES ('
         idx = 0
         for col in row:
+            flag = False
+            if isinstance(col, str):
+                if '"' in col:
+                    col = col.replace('"', r'\"')
+                if "'" in col:
+                    col = col.replace("'", r"\'")
+
             if idx != 0:
-                add_string += ', '
+                add_string += r', '
             add_string += '"' + str(col) + '"'
             idx += 1
-        add_string += ');'
+        add_string += r');'
         try:
             cursor.execute(add_string)
             mydb.commit()
         except:
             print(add_string + " Failed.")
+
+
+def unicode(table, col_2_unicode):
+    for idx, row in enumerate(data[table]['table_dat']):
+        for col in col_2_unicode:
+            data[table]['table_dat'][idx][col] = data[table]['table_dat'][idx][col].encode('utf-8')
+
 mysql_connection()
 
 data = sqlite3_dumb()
 table_time_conv(data['spytify_play'])
 
+needs_unicode = {
+    'spytify_play': ['device'],
+    'spytify_song': ['name'],
+    'spytify_artist': ['artist_name', 'genre'],
+    'spytify_album': ['album_name', 'label'],
+    'auth_user': ['username', 'firstname', 'lastname']
+}
+
 for table in data:
+    if table in needs_unicode:
+        col_2_unicode = []
+        for col in data[table]['table_col']:
+            if col in needs_unicode[table]:
+                data[table]['table_col'][col]['utf8'] = True
+                col_2_unicode.append(data[table]['table_col'][col]['id'])
+        unicode(table, col_2_unicode)
+
     transfer(table)
 
 cursor.close()
