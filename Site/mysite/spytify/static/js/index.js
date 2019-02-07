@@ -45,7 +45,7 @@ return days_of_the_week[ day_idx % days_of_the_week.length ]
  *  with an id of "lineChart" is expected
  *
  *************************************************/
-function draw_history_chart( num_plays ){
+function draw_history_chart( num_plays, days, num_artists ){
 /*-----------------------------
 VARS
 -----------------------------*/
@@ -56,7 +56,7 @@ var date_label = [];
 /*-----------------------------
 Validate input
 -----------------------------*/
-if( num_plays.length > 6 ){
+if( num_plays.length > 50 ){
     throw "draw_history_chart: Invalid array length in var num_plays";
 }
 if( ctxL == null ){
@@ -73,15 +73,27 @@ for( var i = 0; i < num_plays.length; i++ ){
 var myLineChart = new Chart(ctxL, {
     type: 'line',
     data: {
-    labels: date_label,
+//    labels: date_label,
+    labels: days,
     datasets: [{
-        label: "Recent Plays Count",
+        label: "Plays",
         data: num_plays,
         backgroundColor: [
             'rgba(105, 0, 132, .2)',
             ],
         borderColor: [
             'rgba(200, 99, 132, .7)',
+            ],
+        borderWidth: 2
+        },
+        {
+        label: "Artists",
+        data: num_artists,
+        backgroundColor: [
+            'rgba(50, 100, 50, .2)',
+            ],
+        borderColor: [
+            'rgba(50, 150, 100, .7)',
             ],
         borderWidth: 2
         },
@@ -170,7 +182,10 @@ $(document).ready(function() {
         TODO: REPLACE WITH REAL DATA ONCE
         THE BACKEND IS MIGRATED OVER
         -----------------------------------*/
-        draw_history_chart( [1, 2, 3, 2, 4] );
+        console.log(data.plays_per_day)
+        console.log(data.days)
+        console.log(data.artists_per_day)
+        draw_history_chart( data.plays_per_day, data.days, data.artists_per_day);
     })
     .fail( function( data, status ){
         console.log( data );

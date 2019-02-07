@@ -43,8 +43,6 @@
 
 		{% endif %}
 
-        <canvas id="lineChart"></canvas>
-
 	    <p>Welcome, <strong>{{ user.username.upper }}</strong>.</p>
 	    <p>See all of my <a href="user/plays">Plays</a></p>
 
@@ -71,6 +69,11 @@
 					</tbody>
 			        {% endfor %}
 					</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="column">
+                <canvas id="lineChart"></canvas>
 			</div>
 		</div>
 

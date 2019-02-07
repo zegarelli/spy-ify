@@ -4,3 +4,8 @@
     list-style: none;
 }
 
+.column {
+  float: left;
+  width: 50%;
+}
+

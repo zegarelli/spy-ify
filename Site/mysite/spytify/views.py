@@ -15,7 +15,8 @@ from .forms import SignUpForm
 import spotify_api.spotipy.oauth2 as oauth
 
 import utils
-import json
+import datetime
+
 
 def top(request):
     """
@@ -41,11 +42,11 @@ def index(request):
     :return:
     """
     # Generate counts of some of the main objects
-    num_users   = User.objects.all().count()
+    num_users = User.objects.all().count()
     num_artists = Artist.objects.all().count()
-    num_albums  = Album.objects.all().count()
-    num_songs   = Song.objects.all().count()
-    num_plays   = Play.objects.all().count()
+    num_albums = Album.objects.all().count()
+    num_songs = Song.objects.all().count()
+    num_plays = Play.objects.all().count()
     context = {
         'num_users': num_users,
         'num_artists': num_artists,
@@ -79,7 +80,6 @@ def index(request):
                                             FROM     spytify_usertoken
                                             WHERE user_id = {}""".format(request.user.id)).fetchall())
         context['sp_authed'] = sp_authed
-
 
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
@@ -146,7 +146,8 @@ def authedView(request):
     client_secret = '516a6cd7008b4c3f8aa41d800a2415a0'
     scopes = 'user-read-currently-playing user-library-read user-read-recently-played user-read-playback-state user-top-read'
 
-    oAuth2 = oauth.SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri, cache_path=r'spotify_api/token_cache/')
+    oAuth2 = oauth.SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri,
+                                cache_path=r'spotify_api/token_cache/')
 
     token_info = oAuth2.get_access_token(request.GET['code'])
     user = request.user
@@ -176,6 +177,7 @@ def TrackDetailView(request, trackid):
 
     return render(request, 'track.html', context=context)
 
+
 def ArtistDetailView(request, artistid):
     """
     A view for gathering the data for an artist's details page
@@ -191,6 +193,7 @@ def ArtistDetailView(request, artistid):
     # for item in table:
     #     item
     return render(request, 'artist.html', context=context)
+
 
 def AlbumDetailView(request, albumid):
     """
@@ -209,16 +212,33 @@ def AlbumDetailView(request, albumid):
     return render(request, 'album.html', context=context)
 
 
-"""------------------------------------------------------------
--   MODEL NAME: example_query
--
--   DESCRIPTION: Endpoint function for example query
--
-------------------------------------------------------------"""
 def example_query(request):
-    # VARS #
+    """
+    A view for returning example data to ajax
 
-    # PROC #
+    :param request:
+    :return:
+    """
+    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    tomorrow = days[(datetime.datetime.today() + datetime.timedelta(days=+1)).weekday()]
+    last_week = Play.objects.filter(user_id=request.user, time_stamp__contains=tomorrow).order_by('-pk').first()
+    days = days[days.index(tomorrow):] + days[:days.index(tomorrow)]
+    plays_per_day = []
+    artists_per_day = []
+
+    for day in days:
+        plays = Play.objects.filter(user_id=request.user).order_by('pk').filter(pk__gt=last_week.pk,
+                                                                                time_stamp__contains=day)
+        n_plays = len(plays)
+        n_artists = 0
+        artists = []
+        for play in plays:
+            if play.song.artist_id_id not in artists:
+                artists.append(play.song.artist_id_id)
+                n_artists += 1
+        artists_per_day.append(n_artists)
+        plays_per_day.append(n_plays)
+
     if request.method == 'POST':
-        return JsonResponse( {'cat_id': 3} )
-"""END def example_query"""
+        return JsonResponse({'plays_per_day': plays_per_day, 'days': days, 'artists_per_day': artists_per_day})
