@@ -16,6 +16,16 @@ for n, album in enumerate(albums):
                                 WHERE album_id = ?""",
                   (date, album[0]))
         count += 1
+    elif len(str(album[1])) == 7:
+        date = str(album[1]) + '-01'
+
+        c.execute("""UPDATE spytify_album 
+                                SET
+                                release_date = ?
+                                WHERE album_id = ?""",
+                  (date, album[0]))
+
+        count += 1
     if n % 100 == 0:
         print(n, count)
 print(count)
