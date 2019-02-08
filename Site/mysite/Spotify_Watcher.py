@@ -105,6 +105,8 @@ def add_album_to_database(sp, id):
             genres += genre + ', '
         if len(str(f['release_date'])) == 4:
             f['release_date'] = str(f['release_date']) + '-01-01'
+        if len(str(f['release_date'])) == 7:
+            f['release_date'] = str(f['release_date']) + '-01'
         c.execute("""INSERT INTO spytify_album (album_id,album_name,artist_id_id,label,album_popularity,album_type,
         release_date) VALUES (?,?,?,?,?,?,?)""",
                   (id,
