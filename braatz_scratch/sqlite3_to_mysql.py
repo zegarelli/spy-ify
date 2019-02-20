@@ -22,7 +22,7 @@ def mysql_connection():
             host=cred[who]['host'],
             user=cred[who]['user'],
             passwd=cred[who]['pass'],
-            database="spyify"
+            database="spyify",
         )
 
         if mydb.is_connected():
@@ -93,8 +93,12 @@ def transfer(table):
             datatype = "VARCHAR(400)"
         elif str.upper(data[table]['table_col'][col]['datatype']) == "REAL":
             datatype = "FLOAT"
+        # elif str.upper(data[table]['table_col'][col]['datatype']) == "DATE":
+        #     datatype = "VARCHAR(10)"
         else:
             datatype = str.upper(data[table]['table_col'][col]['datatype'])
+        if data[table]['table_col'][col]['name'] == "access_token":
+            datatype = "VARCHAR(300)"
 
         #  Name Replacements
         if data[table]['table_col'][col]['name'] == "key":
@@ -122,28 +126,35 @@ def transfer(table):
         add_string = r'INSERT INTO ' + table + r' VALUES ('
         idx = 0
         for col in row:
-            flag = False
+            empty = False
+            if isinstance(col, bytes):
+                col = col.decode('utf-8')
             if isinstance(col, str):
                 if '"' in col:
                     col = col.replace('"', r'\"')
-                if "'" in col:
-                    col = col.replace("'", r"\'")
-
+            if col == "":
+                col = "NULL"
+                empty = True
             if idx != 0:
                 add_string += r', '
-            add_string += '"' + str(col) + '"'
+            if empty:
+                add_string += str(col)
+            else:
+                add_string += '"' + str(col) + '"'
             idx += 1
         add_string += r');'
         try:
             cursor.execute(add_string)
             mydb.commit()
         except:
-            print(add_string + " Failed.")
+            print("FAILED: " + add_string)
 
 
 def unicode(table, col_2_unicode):
     for idx, row in enumerate(data[table]['table_dat']):
         for col in col_2_unicode:
+            if data[table]['table_dat'][idx][col] == None:
+                data[table]['table_dat'][idx][col] = ''
             data[table]['table_dat'][idx][col] = data[table]['table_dat'][idx][col].encode('utf-8')
 
 mysql_connection()
@@ -153,13 +164,14 @@ table_time_conv(data['spytify_play'])
 
 needs_unicode = {
     'spytify_play': ['device'],
-    'spytify_song': ['name'],
+    'spytify_song': ['song_name'],
     'spytify_artist': ['artist_name', 'genre'],
     'spytify_album': ['album_name', 'label'],
     'auth_user': ['username', 'firstname', 'lastname']
 }
 
 for table in data:
+
     if table in needs_unicode:
         col_2_unicode = []
         for col in data[table]['table_col']:
