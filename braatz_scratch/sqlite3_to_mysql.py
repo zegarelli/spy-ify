@@ -45,10 +45,8 @@ def dumb_string_2_epoch(dumb_string):
         'minute': string_time[1]
     }
 
-    date_time = time_d['day'] + '.' + time_d['month'] + '.' + time_d['year'] + ' ' +  time_d['hour'] + ':' + time_d['minute'] + ':0'
-    pattern = '%d.%m.%Y %H:%M:%S'
-    epoch = int(time.mktime(time.strptime(date_time, pattern)))
-    return  epoch
+    date_time = time_d['year'] + '-' + time_d['month'] + '-' + time_d['day'] + ' ' +  time_d['hour'] + ':' + time_d['minute'] + ':0'
+    return date_time
 
 def sqlite3_dumb():
     dicks = {}
@@ -93,12 +91,12 @@ def transfer(table):
             datatype = "VARCHAR(400)"
         elif str.upper(data[table]['table_col'][col]['datatype']) == "REAL":
             datatype = "FLOAT"
-        # elif str.upper(data[table]['table_col'][col]['datatype']) == "DATE":
-        #     datatype = "VARCHAR(10)"
         else:
             datatype = str.upper(data[table]['table_col'][col]['datatype'])
         if data[table]['table_col'][col]['name'] == "access_token":
             datatype = "VARCHAR(300)"
+
+        data['spytify_play']['table_col']['time_stamp']['datatype'] = 'DATETIME'
 
         #  Name Replacements
         if data[table]['table_col'][col]['name'] == "key":
@@ -180,7 +178,8 @@ for table in data:
                 col_2_unicode.append(data[table]['table_col'][col]['id'])
         unicode(table, col_2_unicode)
 
-    transfer(table)
+    if table == 'spytify_album':
+        transfer(table)
 
 cursor.close()
 mydb.close()
