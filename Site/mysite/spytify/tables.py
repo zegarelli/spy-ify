@@ -33,7 +33,7 @@ class AlbumTable(tables.Table):
     class Meta:
         model = Play
         template_name = 'django_tables2/bootstrap4.html'
-        fields = ('play_id', 'time_stamp', 'context_type', 'context')
+        fields = ('play_id', 'time_stamp', 'song', 'song.artist_id', 'context_type', 'context')
 
 
 class ArtistTable(tables.Table):
@@ -44,4 +44,4 @@ class ArtistTable(tables.Table):
     class Meta:
         model = Play
         template_name = 'django_tables2/bootstrap4.html'
-        fields = ('play_id', 'time_stamp', 'context_type', 'context')
+        fields = ('play_id', 'time_stamp', 'song', 'song.album_id', 'context_type', 'context')

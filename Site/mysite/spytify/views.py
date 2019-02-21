@@ -4,7 +4,7 @@ from django.contrib.auth import login, authenticate
 from django_tables2 import RequestConfig
 from django.db import connection
 from django.http import HttpResponseRedirect
-from .tables import PlayTable, TrackTable
+from .tables import PlayTable, TrackTable, ArtistTable, AlbumTable
 from django.http import JsonResponse
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
@@ -191,7 +191,7 @@ def ArtistDetailView(request, artistid):
     context['artist'] = Artist.objects.get(pk=artistid)
 
     plays = Play.objects.filter(user=request.user.pk, song__artist_id=artistid)
-    table = TrackTable(plays, order_by='-play_id')
+    table = ArtistTable(plays, order_by='-play_id')
     context['plays_table'] = table
 
     RequestConfig(request).configure(table)
@@ -210,7 +210,7 @@ def AlbumDetailView(request, albumid):
     context['album'] = Album.objects.get(pk=albumid)
 
     plays = Play.objects.filter(user=request.user.pk, song__album_id=albumid)
-    table = TrackTable(plays, order_by='-play_id')
+    table = AlbumTable(plays, order_by='-play_id')
     context['plays_table'] = table
 
     return render(request, 'album.html', context=context)
