@@ -147,6 +147,7 @@ class Play(models.Model):
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     device = models.CharField(max_length=50, null=True, blank=True)
     context = models.CharField(max_length=100, null=True, blank=True)
+    context_type = models.CharField(max_length=50, null=True, blank=True)
 
     """----------------------------------------------
     - NAME: __str__()

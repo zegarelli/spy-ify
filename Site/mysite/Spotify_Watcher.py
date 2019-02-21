@@ -16,7 +16,7 @@ def add_play_to_database(user_id, sp, currently_playing):
     id = currently_playing['item']['id']
     device = currently_playing['device']['name']
     context = currently_playing['context']
-
+    
     context_name_or_id = get_context_id_or_name(sp, context)
 
     # format the timestamp
@@ -30,11 +30,8 @@ def add_play_to_database(user_id, sp, currently_playing):
     timestamp = '{} {} {}'.format(day_of_week, date, time_of_day)
 
     largest_id = c.execute("""SELECT MAX(play_id) from spytify_play""").fetchone()
-    c.execute("""INSERT INTO spytify_play (play_id, time_stamp, user_id, song_id, device) VALUES (?,?,?,?,?)""",
-              (largest_id[0] + 1, timestamp, user_id, id, device))
 
-   # c.execute("""INSERT INTO spytify_play (play_id, time_stamp, user_id, song_id, device, context_type, context) VALUES (?,?,?,?,?,?,?)""",
-    #          (largest_id[0] + 1, timestamp, user_id, id, device, context_type, context_name_or_id))
+    c.execute("""INSERT INTO spytify_play (play_id, time_stamp, user_id, song_id, device, context_type, context) VALUES (?,?,?,?,?,?,?)""", (largest_id[0] + 1, timestamp, user_id, id, device, context['type'], context_name_or_id))
     conn.commit()
 
     add_song_to_database(sp, id, artist_id, album_id)
@@ -184,7 +181,7 @@ class User:
                 mprint('    Next ping at {}'.format(
                     time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(self.next_ping))))
             except Exception as e:
-                logging.exception("Exception while making spotify object")
+                logging.exception("Exception while making spotify object for {}: {}".format(self.email, str(e)))
                 self.next_ping = time.time() + 60
 
     def find_token(self, tokens):
