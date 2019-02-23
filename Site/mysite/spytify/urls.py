@@ -12,5 +12,6 @@ urlpatterns = [
     path('track/<trackid>', views.TrackDetailView, name='track-detail'),
     path('artist/<artistid>', views.ArtistDetailView, name='artist-detail'),
     path('album/<albumid>', views.AlbumDetailView, name='album-detail'),
-    path('example_query/', views.example_query, name='example_query')
+    path('example_query/', views.example_query, name='example_query'),
+    path('user/free_query', views.free_query, name='free_query')
 ]

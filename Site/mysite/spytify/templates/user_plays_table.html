@@ -1,7 +1,29 @@
 {% extends "base_generic.html" %}
 {% load render_table from django_tables2 %}
+
+{% block javascript %}
+  <!--<script>-->
+    <!--$("#testquery").change(function () {-->
+      <!--console.log( $(this).val() );-->
+
+      <!--$.ajax({-->
+        <!--url: '/free_query/',-->
+        <!--data: {-->
+          <!--'username': testquery-->
+        <!--},-->
+        <!--dataType: 'json',-->
+        <!--success: function (data) {-->
+          <!--console.log(data.plays)-->
+        <!--}-->
+      <!--});-->
+
+    <!--});-->
+  <!--</script>-->
+{% endblock %}
+
 {% block content %}
   <div style="margin-left:20px;margin-top:20px">
   <h1>Plays</h1>
+    <input type="text" required="" name="testquery" maxlength="150" id="testquery" autofocus="">
   {% render_table plays_table %}
 {% endblock %}

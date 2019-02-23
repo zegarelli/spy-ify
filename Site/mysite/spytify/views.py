@@ -246,3 +246,19 @@ def example_query(request):
 
     if request.method == 'POST':
         return JsonResponse({'plays_per_day': plays_per_day, 'days': days, 'artists_per_day': artists_per_day})
+
+def free_query(request):
+    """
+    A view for returning a user's query to ajax
+
+    :param request:
+    :return:
+    """
+    query = request.GET.get('query', None)
+    plays = Play.objects.filter(user_id=request.user).order_by('pk').filter(song__song_name__contains = query)
+    results = []
+    for n, play in enumerate(plays):
+        results.append(play.song.song_name)
+
+    return JsonResponse({'filtered': results})
+
