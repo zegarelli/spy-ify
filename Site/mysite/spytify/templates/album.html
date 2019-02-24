@@ -5,7 +5,7 @@
   <div style="margin-left:20px;margin-top:20px">
   <h1>{{album.artist_id}}: {{album}}</h1>
 	      <br><strong>Release Date: </strong> {{ album.release_date}}
-	      <br><strong>Spotify Link: </strong><a href="https://open.spotify.com/artist/{{ artist.pk }}">Link</a>
+	      <br><strong>Spotify Link: </strong><a href="https://open.spotify.com/album/{{ album.pk }}">Link</a>
 
 	<h2>Your Plays of {{album}}</h2>
 	  {% render_table plays_table %}
