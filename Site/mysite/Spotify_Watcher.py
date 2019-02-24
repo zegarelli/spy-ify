@@ -16,8 +16,13 @@ def add_play_to_database(user_id, sp, currently_playing):
     id = currently_playing['item']['id']
     device = currently_playing['device']['name']
     context = currently_playing['context']
-    
-    context_name_or_id = get_context_id_or_name(sp, context)
+
+    if context:
+        context_name_or_id = get_context_id_or_name(sp, context)
+        context_type = context['type']
+    else:
+        context_name_or_id = 'None'
+        context_type = 'None'
 
     # format the timestamp
     now = datetime.datetime.now()
@@ -31,7 +36,7 @@ def add_play_to_database(user_id, sp, currently_playing):
 
     largest_id = c.execute("""SELECT MAX(play_id) from spytify_play""").fetchone()
 
-    c.execute("""INSERT INTO spytify_play (play_id, time_stamp, user_id, song_id, device, context_type, context) VALUES (?,?,?,?,?,?,?)""", (largest_id[0] + 1, timestamp, user_id, id, device, context['type'], context_name_or_id))
+    c.execute("""INSERT INTO spytify_play (play_id, time_stamp, user_id, song_id, device, context_type, context) VALUES (?,?,?,?,?,?,?)""", (largest_id[0] + 1, timestamp, user_id, id, device, context_type, context_name_or_id))
     conn.commit()
 
     add_song_to_database(sp, id, artist_id, album_id)
