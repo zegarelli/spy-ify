@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django_tables2 import RequestConfig
@@ -118,13 +118,35 @@ def UserPlaysView(request):
     if request.user.is_authenticated:
         plays = Play.objects.filter(user=request.user.pk)
         table = PlayTable(plays, order_by='-play_id')
-        context = {
-            'plays_table': table,
-            'user': request.user
-        }
 
         RequestConfig(request).configure(table)
 
+        columns = []
+        for item in list(plays[1].__dict__.keys()):
+            if item[0] != '_':
+                columns.append({'path': item,
+                                'name': 'Play - '+item})
+
+        for item in list(plays[1].song.__dict__.keys()):
+            if item[0] != '_':
+                columns.append({'path': 'song__'+item,
+                                'name': 'Song - '+item})
+
+        for item in list(plays[1].song.artist_id.__dict__.keys()):
+            if item[0] != '_':
+                columns.append({'path': 'song__artist_id__'+item,
+                                'name': 'Artist - '+item})
+
+        for item in list(plays[1].song.album_id.__dict__.keys()):
+            if item[0] != '_':
+                columns.append({'path': 'song__album_id__'+item,
+                                'name': 'Album - '+item})
+
+        context = {
+            'plays_table': table,
+            'user': request.user,
+            'columns': columns
+        }
         return render(request, 'user_plays_table.html', context=context)
     else:
         # redirect to the base page if we're not authenticated
@@ -254,11 +276,27 @@ def free_query(request):
     :param request:
     :return:
     """
-    query = request.GET.get('query', None)
-    plays = Play.objects.filter(user_id=request.user).order_by('pk').filter(song__song_name__contains = query)
-    results = []
-    for n, play in enumerate(plays):
-        results.append(play.song.song_name)
+    columns_check = request.GET.get('columns_check', None)
+    if columns_check == 'on':
+        columns = ['play_id', 'time_stamp', 'song_name', 'artist_name', 'album_name', 'context_type', 'context']
+    else:
+        columns = request.GET.get('columns', None).replace(' ','').split(',')
+    playquery = request.GET.get('playquery', None)
+    songquery = request.GET.get('songquery', None)
+    artistquery = request.GET.get('artistquery', None)
+    albumquery = request.GET.get('albumquery', None)
 
-    return JsonResponse({'filtered': results})
+    plays = Play.objects.filter(user_id=request.user).order_by('pk')
+    if len(songquery):
+        plays = plays.filter(song__song_name__contains=songquery)
+
+    rows = []
+    for n, play in enumerate(plays):
+        row = []
+        for column in columns:
+            row.append(play.song.song_name)
+
+
+        rows.append(row)
+    return render_to_response('search_table.html', {'rows': rows, 'columns': columns})
 

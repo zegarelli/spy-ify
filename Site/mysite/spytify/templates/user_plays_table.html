@@ -1,29 +1,40 @@
 {% extends "base_generic.html" %}
 {% load render_table from django_tables2 %}
 
-{% block javascript %}
-  <!--<script>-->
-    <!--$("#testquery").change(function () {-->
-      <!--console.log( $(this).val() );-->
-
-      <!--$.ajax({-->
-        <!--url: '/free_query/',-->
-        <!--data: {-->
-          <!--'username': testquery-->
-        <!--},-->
-        <!--dataType: 'json',-->
-        <!--success: function (data) {-->
-          <!--console.log(data.plays)-->
-        <!--}-->
-      <!--});-->
-
-    <!--});-->
-  <!--</script>-->
-{% endblock %}
-
 {% block content %}
-  <div style="margin-left:20px;margin-top:20px">
-  <h1>Plays</h1>
-    <input type="text" required="" name="testquery" maxlength="150" id="testquery" autofocus="">
-  {% render_table plays_table %}
+<div style="margin-left:20px;margin-top:20px">
+    <h1>Plays</h1>
+    <div class="row">
+        <div class="sm_column">
+            <h2>Columns</h2>
+            <select multiple>
+                {% for column in columns%}
+                    <option value="{{column.path}}" id="columns">{{column.name}}</option>
+                {% endfor %}
+            </select><br>
+            <input type="checkbox" id="column-checkbox"> Use Default Columns
+        </div>
+        <div class="sm_column">
+            <h2>Play Query</h2>
+            <input type="text" required="" name="playquery" maxlength="150" id="playquery" autofocus="">
+            <br>
+            <p>Example: device='myDesktop'</p>
+            <p>Example: device__contains='Desktop'</p>
+        </div>
+        <div class="sm_column">
+            <h2>Song Query</h2>
+            <input type="text" required="" name="songquery" maxlength="150" id="songquery" autofocus="">
+        </div>
+        <div class="sm_column">
+            <h2>Artist Query</h2>
+            <input type="text" required="" name="artistquery" maxlength="150" id="artistquery" autofocus="">
+        </div>
+        <div class="sm_column">
+            <h2>Album Query</h2>
+            <input type="text" required="" name="albumquery" maxlength="150" id="albumquery" autofocus="">
+        </div>
+    </div>
+    <div id="search-results"></div>
+
+</div>
 {% endblock %}
