@@ -4,36 +4,22 @@
 {% block content %}
 <div style="margin-left:20px;margin-top:20px">
     <h1>Plays</h1>
-    <div class="row">
-        <div class="sm_column">
-            <h2>Columns</h2>
-            <select multiple>
-                {% for column in columns%}
-                    <option value="{{column.path}}" id="columns">{{column.name}}</option>
-                {% endfor %}
-            </select><br>
-            <input type="checkbox" id="column-checkbox"> Use Default Columns
-        </div>
-        <div class="sm_column">
-            <h2>Play Query</h2>
-            <input type="text" required="" name="playquery" maxlength="150" id="playquery" autofocus="">
-            <br>
-            <p>Example: device='myDesktop'</p>
-            <p>Example: device__contains='Desktop'</p>
-        </div>
-        <div class="sm_column">
-            <h2>Song Query</h2>
-            <input type="text" required="" name="songquery" maxlength="150" id="songquery" autofocus="">
-        </div>
-        <div class="sm_column">
-            <h2>Artist Query</h2>
-            <input type="text" required="" name="artistquery" maxlength="150" id="artistquery" autofocus="">
-        </div>
-        <div class="sm_column">
-            <h2>Album Query</h2>
-            <input type="text" required="" name="albumquery" maxlength="150" id="albumquery" autofocus="">
-        </div>
-    </div>
+            <h3>Columns</h3>
+            <input type="text" required="" name="columns" maxlength="150" id="columns" autofocus="" size="60"
+            value="play.play_id, play.time_stamp, song.song_name, artist.artist_name, album.album_name, play.context_type, play.context">
+            <p><strong>Available Columns</strong>
+            {% for column in columns %}
+                {{ column }},
+            {% endfor %}
+            </p>
+            <h3>Play Query</h3>
+            <input type="text" required="" name="playquery" maxlength="150" id="playquery" autofocus="" size="60"
+            value="song.song_name CONTAINS &quot&quot">
+            <p><strong>Available Operators</strong>
+            {% for operator in operators %}
+                {{ operator }},
+            {% endfor %}
+            </p>
     <div id="search-results"></div>
 
 </div>
