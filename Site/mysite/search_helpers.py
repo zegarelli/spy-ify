@@ -98,9 +98,11 @@ def search_columns(term):
 
 
 def validate_val(new, partial_val=''):
+    val = None
     if new[0] == '"' or new[0] == "'":
         partial_val += new
-        val = None
+    elif partial_val != '':
+        partial_val += ' ' + new
     else:
         val = new
 
@@ -112,8 +114,8 @@ def validate_val(new, partial_val=''):
                 if double:
                     double = False
                 else:
-                    single = True
-            if char == "'":
+                    double = True
+            elif char == "'":
                 if single:
                     single = False
                 else:
@@ -121,6 +123,8 @@ def validate_val(new, partial_val=''):
         if double and single:
             val = partial_val
 
+    if val:
+        val = val[1:][:-1]
     return val, partial_val
 
 
