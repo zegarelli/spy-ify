@@ -9,3 +9,8 @@
   width: 50%;
 }
 
+.sm_column {
+  float: left;
+  width: 20%;
+}
+

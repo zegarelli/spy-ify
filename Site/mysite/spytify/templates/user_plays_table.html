@@ -1,7 +1,26 @@
 {% extends "base_generic.html" %}
 {% load render_table from django_tables2 %}
+
 {% block content %}
-  <div style="margin-left:20px;margin-top:20px">
-  <h1>Plays</h1>
-  {% render_table plays_table %}
+<div style="margin-left:20px;margin-top:20px">
+    <h1>Plays</h1>
+            <h3>Columns</h3>
+            <input type="text" required="" name="columns" maxlength="150" id="columns" autofocus="" size="60"
+            value="play.play_id, play.time_stamp, song.song_name, artist.artist_name, album.album_name, play.context_type, play.context">
+            <p><strong>Available Columns</strong>
+            {% for column in columns %}
+                {{ column }},
+            {% endfor %}
+            </p>
+            <h3>Play Query</h3>
+            <input type="text" required="" name="playquery" maxlength="150" id="playquery" autofocus="" size="60"
+            value="song.song_name CONTAINS &quot&quot">
+            <p><strong>Available Operators</strong>
+            {% for operator in operators %}
+                {{ operator }},
+            {% endfor %}
+            </p>
+    <div id="search-results"></div>
+
+</div>
 {% endblock %}

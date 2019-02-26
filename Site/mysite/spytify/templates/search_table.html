@@ -1,0 +1,31 @@
+<div id="query-table">
+    <div class="table-container">
+        <table class="table">
+            {% if columns|length > 0 %}
+                <thead class="thead-default">
+                    {% for column in columns %}
+                    <th class="orderable">
+                        <a href="?sort={{column}}">{{column}}</a>
+                    </th>
+                    {% endfor %}
+                </thead>
+                    <tbody class="thead-default">
+                    {% if rows|length > 0 %}
+                        {% for item in rows %}
+                        <tr>
+                            {% for value in item %}
+                                <td>{{value}}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    {% endif %}
+            {% else %}
+            <p> You must include columns to display. </p>
+            {% endif %}
+        </table>
+        {% if rows|length == 0 %}
+            <p> Your Query Returned No Results</p>
+        {% endif %}
+    </div>
+</div>
