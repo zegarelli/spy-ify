@@ -80,6 +80,8 @@ class Play(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     device = models.CharField(max_length=50, null=True, blank=True)
+    context = models.CharField(max_length=100, null=True, blank=True)
+    context_type = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
         return '{} {}: {}'.format(self.time_stamp, self.user, self.song)

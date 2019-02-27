@@ -15,6 +15,14 @@ def add_play_to_database(user_id, sp, currently_playing):
     album_id = currently_playing['item']['album']['id']
     id = currently_playing['item']['id']
     device = currently_playing['device']['name']
+    context = currently_playing['context']
+
+    if context:
+        context_name_or_id = get_context_id_or_name(sp, context)
+        context_type = context['type']
+    else:
+        context_name_or_id = 'None'
+        context_type = 'None'
 
     # format the timestamp
     now = datetime.datetime.now()
@@ -27,8 +35,8 @@ def add_play_to_database(user_id, sp, currently_playing):
     timestamp = '{} {} {}'.format(day_of_week, date, time_of_day)
 
     largest_id = c.execute("""SELECT MAX(play_id) from spytify_play""").fetchone()
-    c.execute("""INSERT INTO spytify_play (play_id, time_stamp, user_id, song_id, device) VALUES (?,?,?,?,?)""",
-              (largest_id[0] + 1, timestamp, user_id, id, device))
+
+    c.execute("""INSERT INTO spytify_play (play_id, time_stamp, user_id, song_id, device, context_type, context) VALUES (?,?,?,?,?,?,?)""", (largest_id[0] + 1, timestamp, user_id, id, device, context_type, context_name_or_id))
     conn.commit()
 
     add_song_to_database(sp, id, artist_id, album_id)
@@ -80,6 +88,24 @@ def add_song_to_database(sp, id, artist_id, album_id):
                    f['time_signature'],))
         conn.commit()
 
+# gets the context id if the context is an album or artist
+# or gets the playlist name if context is a playlist
+def get_context_id_or_name(sp, context):
+    context_uri = context['uri']
+
+    context_id = ""
+    index = 0
+    uri_length = len(context_uri)
+    for character in reversed(context_uri):
+        if character == ':':
+            context_id = context_uri[uri_length - index:uri_length]
+            break
+        index = index + 1
+
+    if context['type'] == 'playlist':
+        return sp.playlist(context_id)['name']
+    else:
+        return context_id
 
 def add_artist_to_database(sp, id):
     if len(c.execute("SELECT * FROM spytify_artist WHERE artist_id=?", (id,)).fetchall()) == 0:
@@ -174,7 +200,7 @@ class User:
                 mprint('    Next ping at {}'.format(
                     time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(self.next_ping))))
             except Exception as e:
-                logging.exception("Exception while making spotify object")
+                logging.exception("Exception while making spotify object for {}: {}".format(self.email, str(e)))
                 self.next_ping = time.time() + 60
 
     def find_token(self, tokens):

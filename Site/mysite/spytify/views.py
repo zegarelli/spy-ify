@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django_tables2 import RequestConfig
 from django.db import connection
 from django.http import HttpResponseRedirect
-from .tables import PlayTable, TrackTable
+from .tables import PlayTable, TrackTable, ArtistTable, AlbumTable
 from django.http import JsonResponse
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
@@ -15,6 +15,7 @@ from .forms import SignUpForm
 import spotify_api.spotipy.oauth2 as oauth
 
 import utils
+import search_helpers
 import datetime
 
 
@@ -118,13 +119,15 @@ def UserPlaysView(request):
     if request.user.is_authenticated:
         plays = Play.objects.filter(user=request.user.pk)
         table = PlayTable(plays, order_by='-play_id')
-        context = {
-            'plays_table': table,
-            'user': request.user
-        }
 
         RequestConfig(request).configure(table)
 
+        context = {
+            'plays_table': table,
+            'user': request.user,
+            'columns': search_helpers.list_columns(),
+            'operators': search_helpers.list_operators(),
+        }
         return render(request, 'user_plays_table.html', context=context)
     else:
         # redirect to the base page if we're not authenticated
@@ -169,11 +172,12 @@ def TrackDetailView(request, trackid):
     """
     context = {'user': request.user}
     context['track'] = Song.objects.get(pk=trackid)
-    table = reversed(list(Play.objects.filter(user_id=request.user).filter(song_id=trackid)))
-    context['track_table'] = table
-    # context['track_table'] = TrackTable(table)
 
-    # RequestConfig(request).configure(table)
+    plays = Play.objects.filter(user=request.user.pk, song__song_id=trackid)
+    table = TrackTable(plays, order_by='-play_id')
+    context['plays_table'] = table
+
+    RequestConfig(request).configure(table)
 
     return render(request, 'track.html', context=context)
 
@@ -188,10 +192,12 @@ def ArtistDetailView(request, artistid):
     """
     context = {'user': request.user}
     context['artist'] = Artist.objects.get(pk=artistid)
-    table = reversed(list(Play.objects.filter(user_id=request.user).filter(song_id__artist_id=artistid)))
-    context['artist_table'] = table
-    # for item in table:
-    #     item
+
+    plays = Play.objects.filter(user=request.user.pk, song__artist_id=artistid)
+    table = ArtistTable(plays, order_by='-play_id')
+    context['plays_table'] = table
+
+    RequestConfig(request).configure(table)
     return render(request, 'artist.html', context=context)
 
 
@@ -206,8 +212,9 @@ def AlbumDetailView(request, albumid):
     context = {'user': request.user}
     context['album'] = Album.objects.get(pk=albumid)
 
-    table = reversed(list(Play.objects.filter(user_id=request.user).filter(song_id__album_id=albumid)))
-    context['album_table'] = table
+    plays = Play.objects.filter(user=request.user.pk, song__album_id=albumid)
+    table = AlbumTable(plays, order_by='-play_id')
+    context['plays_table'] = table
 
     return render(request, 'album.html', context=context)
 
@@ -242,3 +249,48 @@ def example_query(request):
 
     if request.method == 'POST':
         return JsonResponse({'plays_per_day': plays_per_day, 'days': days, 'artists_per_day': artists_per_day})
+
+def free_query(request):
+    """
+    A view for returning a user's query to ajax
+
+    :param request:
+    :return:
+    """
+    # columns_check = request.GET.get('columns_check', None)
+    # if columns_check == 'on':
+    #     columns = ['play_id', 'time_stamp', 'song_name', 'artist_name', 'album_name', 'context_type', 'context']
+    # else:
+    columns = request.GET.get('columns', None).replace(' ','').split(',')
+
+    playquery = request.GET.get('playquery', None)
+
+    plays = Play.objects.filter(user_id=request.user).order_by('pk').order_by('-play_id')
+
+    filters = search_helpers.convert(playquery)
+
+    if filters:
+        plays = plays.filter(**filters)
+
+    rows = []
+    for n, play in enumerate(plays):
+        play = search_helpers.play_to_dict(play)
+        row = []
+        for column in columns:
+            table, column_name = column.split('.')
+            row.append(play[table][column_name])
+        if n > 100:
+            break
+
+        rows.append(row)
+    return render_to_response('search_table.html', {'rows': rows, 'columns': columns})
+
+def play_to_dict(play):
+    play = {
+        'play': play.__dict__,
+        'song': play.song.__dict__,
+        'artist': play.song.__dict__,
+        'album': play.song.__dict__,
+    }
+
+    return play

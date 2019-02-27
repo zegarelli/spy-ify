@@ -1,4 +1,6 @@
 {% extends "base_generic.html" %}
+
+{% load render_table from django_tables2 %}
 {% block content %}
   <div style="margin-left:20px;margin-top:20px">
   <h1>{{track}}</h1>
@@ -12,17 +14,29 @@
 	      <br><strong>Spotify Link: </strong><a href="https://open.spotify.com/track/{{ track.pk }}">Link</a>
 
 	<h2>Your Plays of {{track}}</h2>
-	 <table>
-	    <tr>
-	        <th>Play ID</th>
-	        <th>Timestamp</th>
-	    </tr>
-	  {% for play in track_table %}
-	    <tr>
-	        <td>{{ play.play_id }}</td>
-	        <td>{{ play.time_stamp }}</td>
-	    </tr>
-	    {% endfor %}
-	</table>
+	  {% render_table plays_table %}
+	 <!--<table>-->
+	    <!--<tr>-->
+	        <!--<th>Play ID</th>-->
+	        <!--<th>Timestamp</th>-->
+	        <!--<th>Context_Type</th>-->
+	        <!--<th>Context</th>-->
+	    <!--</tr>-->
+	  <!--{% for play in track_table %}-->
+	    <!--<tr>-->
+	        <!--<td>{{ play.play_id }}</td>-->
+	        <!--<td>{{ play.time_stamp }}</td>-->
+	        <!--<td>{{ play.context_type }}</td>-->
+		    <!--{% if play.context_type == 'album' %}-->
+		    <!--<td>{{ play.song.album_id }}</td>-->
+		    <!--{% elif play.context_type == 'artist' %}-->
+		    <!--<td>{{ play.song.artist_id }}</td>-->
+		    <!--{% else %}-->
+		    <!--<td>{{ play.context }}</td>-->
+		    <!--{% endif %}-->
+
+	    <!--</tr>-->
+	    <!--{% endfor %}-->
+	<!--</table>-->
 
 {% endblock %}
