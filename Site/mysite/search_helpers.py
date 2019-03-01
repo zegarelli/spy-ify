@@ -123,7 +123,7 @@ def validate_val(new, partial_val=''):
         if double and single:
             val = partial_val
 
-    if val:
+    if val and (val[0] == '"' or val[0] == "'"):
         val = val[1:][:-1]
     return val, partial_val
 
