@@ -90,6 +90,7 @@ db.sqlite3
 .db
 
 Error_log.txt
+auth.json
 
 # Pycharm
 .idea/
