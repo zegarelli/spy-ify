@@ -21,17 +21,9 @@ function getCookie(name) {
 
 function update_search() {
     var playquery = $("#playquery").val();
-    var songquery = $("#songquery").val();
-    var artistquery = $("#artistquery").val();
-    var albumquery = $("#albumquery").val();
     var columns = $("#columns").val();
-    var columns_check = $("#column-checkbox").val();
       console.log( '    playquery:' + playquery );
-      console.log( '    songquery:' + songquery );
-      console.log( '    artistquery:' + artistquery );
-      console.log( '    albumquery:' + albumquery );
       console.log( '    columns:' + columns );
-      console.log( '    columns_check:' + columns_check );
 
     var csrftoken = getCookie('csrftoken')
 
@@ -48,11 +40,7 @@ function update_search() {
         url: 'free_query',
         data: {
             'playquery': playquery,
-            'songquery': songquery,
-            'artistquery': artistquery,
-            'albumquery': albumquery,
             'columns': columns,
-            'columns_check': columns_check
         },
         dataType: 'html',
         success: function (data) {
@@ -65,27 +53,15 @@ $(document).ready(function(){
     console.log('in document ready')
     update_search()
 })
+
 $("#playquery").change(function(){
     console.log('in playquery')
     update_search()
 });
-$("#songquery").change(function(){
-    console.log('in songquery')
-    update_search()
-});
-$("#artistquery").change(function(){
-    console.log('in artistquery')
-    update_search()
-});
-$("#albumquery").change(function(){
-    console.log('in albumquery')
-    update_search()
-});
+
 $("#columns").change(function(){
     console.log('in columns')
     update_search()
 });
-$("#columns_check").change(function(){
-    console.log('in columns_check')
-    update_search()
-});
+
+

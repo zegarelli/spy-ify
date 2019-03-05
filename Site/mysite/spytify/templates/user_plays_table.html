@@ -1,6 +1,9 @@
 {% extends "base_generic.html" %}
 {% load render_table from django_tables2 %}
 
+{% load static %}
+<script src="{% static 'js/app.js' %}"></script>
+
 {% block content %}
 <div style="margin-left:20px;margin-top:20px">
     <h1>Plays</h1>

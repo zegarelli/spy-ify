@@ -257,10 +257,6 @@ def free_query(request):
     :param request:
     :return:
     """
-    # columns_check = request.GET.get('columns_check', None)
-    # if columns_check == 'on':
-    #     columns = ['play_id', 'time_stamp', 'song_name', 'artist_name', 'album_name', 'context_type', 'context']
-    # else:
     columns = request.GET.get('columns', None).replace(' ','').split(',')
 
     playquery = request.GET.get('playquery', None)
