@@ -267,32 +267,38 @@ def free_query(request):
 
     filters = search_helpers.convert(playquery)
 
+    fields = []
+    for column in columns:
+        table, field = column.split('.')
+        fields.append(search_helpers.columns[table][column])
+
     if filters:
-        plays = plays.filter(**filters)[:100]
+        plays = plays.filter(**filters).values(*fields)
 
-    ptd = 0
-    els = 0
-    rows = []
-    for n, play in enumerate(plays):
-        start = time.time()
-        play = search_helpers.play_to_dict(play)
-        ptd += time.time() - start
-        start = time.time()
-        row = []
-        for column in columns:
-            table, column_name = column.split('.')
-            row.append(play[table][column_name])
-        if n > 100:
-            break
 
-        rows.append(row)
-        els += time.time() - start
+    # ptd = 0
+    # els = 0
+    # rows = []
+    # for n, play in enumerate(plays):
+    #     start = time.time()
+    #     play = search_helpers.play_to_dict(play)
+    #     ptd += time.time() - start
+    #     start = time.time()
+    #     row = []
+    #     for column in columns:
+    #         table, column_name = column.split('.')
+    #         row.append(play[table][column_name])
+    #     if n > 100:
+    #         break
+    #
+    #     rows.append(row)
+    #     els += time.time() - start
+    #
+    # print('Play to Dict time: ', ptd)
+    # print('Everything Else Time: ', els)
+    # print('Building Table Total: ', time.time() - start)
 
-    print('Play to Dict time: ', ptd)
-    print('Everything Else Time: ', els)
-    print('Building Table Total: ', time.time() - start)
-
-    return render_to_response('search_table.html', {'rows': rows, 'columns': columns})
+    return render_to_response('search_table.html', {'rows': plays, 'columns': columns})
 
 def play_to_dict(play):
     play = {
