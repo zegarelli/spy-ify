@@ -18,6 +18,7 @@ import utils
 import search_helpers
 import datetime
 
+import time
 
 def top(request):
     """
@@ -257,6 +258,7 @@ def free_query(request):
     :param request:
     :return:
     """
+
     columns = request.GET.get('columns', None).replace(' ','').split(',')
 
     playquery = request.GET.get('playquery', None)
@@ -266,11 +268,16 @@ def free_query(request):
     filters = search_helpers.convert(playquery)
 
     if filters:
-        plays = plays.filter(**filters)
+        plays = plays.filter(**filters)[:100]
 
+    ptd = 0
+    els = 0
     rows = []
     for n, play in enumerate(plays):
+        start = time.time()
         play = search_helpers.play_to_dict(play)
+        ptd += time.time() - start
+        start = time.time()
         row = []
         for column in columns:
             table, column_name = column.split('.')
@@ -279,6 +286,12 @@ def free_query(request):
             break
 
         rows.append(row)
+        els += time.time() - start
+
+    print('Play to Dict time: ', ptd)
+    print('Everything Else Time: ', els)
+    print('Building Table Total: ', time.time() - start)
+
     return render_to_response('search_table.html', {'rows': rows, 'columns': columns})
 
 def play_to_dict(play):
