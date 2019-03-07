@@ -44,7 +44,8 @@ function update_search() {
         },
         dataType: 'json',
         success: function (data) {
-        console.log(data)
+        // clear out to <div> surrounding the table
+        $('#search-results').empty()
 
         // make table header
         var html = '<table class="table"><thead class="thead-default">'
@@ -53,7 +54,7 @@ function update_search() {
 
         html += '</thead><tbody class="thead-default">'
 
-
+        // make table rows
         for (row in data.plays){
             html += '<tr>'
             for (cell in data.plays[row])
@@ -64,7 +65,6 @@ function update_search() {
 
         html += '</tbody>'
 
-        console.log(html)
         $(html).appendTo('#search-results');
         }
     })
