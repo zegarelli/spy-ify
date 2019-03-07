@@ -19,11 +19,13 @@ function getCookie(name) {
     return cookieValue;
 }
 
+function search(){
+
+}
+
 function update_search() {
     var playquery = $("#playquery").val();
     var columns = $("#columns").val();
-      console.log( '    playquery:' + playquery );
-      console.log( '    columns:' + columns );
 
     var csrftoken = getCookie('csrftoken')
 
@@ -44,28 +46,76 @@ function update_search() {
         },
         dataType: 'json',
         success: function (data) {
-        // clear out to <div> surrounding the table
-        $('#search-results').empty()
+            // clear out to <div> surrounding the table
+            $('#search-results').empty()
 
-        // make table header
-        var html = '<table class="table"><thead class="thead-default">'
-        for (var i = 0, len = data.columns.length; i < len; ++i)
-            html += '<th class="orderable"><a href="?sort=' + data.columns[i] + '">' + data.columns[i] + '</a></th>'
+            // make table header
+            var html = '<table class="table"><thead class="thead-default">'
+            for (var i = 0, len = data.columns.length; i < len; ++i)
+                html += '<th class="orderable"><a href="?sort=' + data.columns[i] + '">' + data.columns[i] + '</a></th>'
 
-        html += '</thead><tbody class="thead-default">'
+            html += '</thead><tbody class="thead-default">'
 
-        // make table rows
-        for (row in data.plays){
-            html += '<tr>'
-            for (cell in data.plays[row])
-                html += '<td>' + data.plays[row][cell] + '</td>'
+            // make table rows
+            for (row in data.plays){
+                html += '<tr>'
+                for (cell in data.plays[row])
+                    html += '<td>' + data.plays[row][cell] + '</td>'
 
-            html += '</tr>'
+                html += '</tr>'
+            }
+
+            html += '</tbody>'
+
+            $(html).appendTo('#search-results');
         }
+    })
+}
 
-        html += '</tbody>'
+function download_csv() {
+    var playquery = $("#playquery").val();
+    var columns = $("#columns").val();
 
-        $(html).appendTo('#search-results');
+    var csrftoken = getCookie('csrftoken')
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            // if not safe, set csrftoken
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $.ajax({
+        url: 'free_query',
+        data: {
+            'playquery': playquery,
+            'columns': columns,
+        },
+        dataType: 'json',
+        success: function (data) {
+            data.plays.unshift(data.columns)
+            console.log(data.plays)
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            data.plays.forEach(function(rowArray){
+               let row = rowArray.join(",");
+               csvContent += row + "\r\n";
+               console.log(csvContent)
+            });
+
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            window.open(encodedUri);
+
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "my_data.csv");
+            document.body.appendChild(link); // Required for FF
+
+link.click();
         }
     })
 }
@@ -85,4 +135,6 @@ $("#columns").change(function(){
     update_search()
 });
 
-
+$("#download").click(function(){
+    download_csv()
+});
