@@ -42,9 +42,30 @@ function update_search() {
             'playquery': playquery,
             'columns': columns,
         },
-        dataType: 'html',
+        dataType: 'json',
         success: function (data) {
-          $('#search-results').html(data)
+        console.log(data)
+
+        // make table header
+        var html = '<table class="table"><thead class="thead-default">'
+        for (var i = 0, len = data.columns.length; i < len; ++i)
+            html += '<th class="orderable"><a href="?sort=' + data.columns[i] + '">' + data.columns[i] + '</a></th>'
+
+        html += '</thead><tbody class="thead-default">'
+
+
+        for (row in data.plays){
+            html += '<tr>'
+            for (cell in data.plays[row])
+                html += '<td>' + data.plays[row][cell] + '</td>'
+
+            html += '</tr>'
+        }
+
+        html += '</tbody>'
+
+        console.log(html)
+        $(html).appendTo('#search-results');
         }
     })
 }
