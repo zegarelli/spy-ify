@@ -1,8 +1,15 @@
 {% extends "base_generic.html" %}
-{% load render_table from django_tables2 %}
 
-{% load static %}
-<script src="{% static 'js/app.js' %}"></script>
+{% block loads %}
+    {% load static %}
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+            integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+            crossorigin="anonymous"></script>
+
+    <!-- Local JS Files -->
+    <script type="text/javascript" src="{% static "js/app.js" %}"></script>
+{% endblock %}
 
 {% block content %}
 <div style="margin-left:20px;margin-top:20px">
