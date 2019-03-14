@@ -68,6 +68,10 @@ function update_search() {
             html += '</tbody>'
 
             $(html).appendTo('#search-results');
+
+            var len = data.plays.length
+            $('#result-count').empty()
+            $('#result-count').append(len)
         }
     })
 }

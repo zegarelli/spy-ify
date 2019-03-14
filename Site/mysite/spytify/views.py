@@ -122,12 +122,17 @@ def UserPlaysView(request):
         table = PlayTable(plays, order_by='-play_id')
 
         RequestConfig(request).configure(table)
-
+        now = datetime.datetime.now()
+        day = now.day
+        month = now.month
+        year = now.year
+        today = '{}/{}/{}'.format(month, day, year)
         context = {
             'plays_table': table,
             'user': request.user,
             'columns': search_helpers.list_columns(),
             'operators': search_helpers.list_operators(),
+            'today': today
         }
         return render(request, 'user_plays_table.html', context=context)
     else:

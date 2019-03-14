@@ -17,13 +17,17 @@
             </p>
             <h3>Play Query</h3>
             <input type="text" required="" name="playquery" maxlength="150" id="playquery" autofocus="" size="60"
-            value="song.song_name CONTAINS &quot&quot">
+            value="play.time_stamp CONTAINS {{ today }}">
             <p><strong>Available Operators</strong>
             {% for operator in operators %}
                 {{ operator }},
             {% endfor %}
             </p>
-    <button type="button" id="download">Download Results</button>
+    <p>
+        <button type="button" id="download">Download Results</button>
+        <strong>Total Results: </strong>
+        <span id="result-count"></span>
+    </p>
     <div id="search-results">
 
     </div>
