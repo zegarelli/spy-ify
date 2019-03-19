@@ -276,7 +276,6 @@ def free_query(request):
     for column in columns:
         table, field = column.split('.')
         fields.append(search_helpers.columns[table][field])
-
     if filters:
         plays = list(plays.filter(**filters).values_list(*fields))
 
