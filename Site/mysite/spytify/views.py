@@ -277,6 +277,26 @@ def free_query(request):
         table, field = column.split('.')
         fields.append(search_helpers.columns[table][field])
     if filters:
-        plays = list(plays.filter(**filters).values_list(*fields))
+        plays = list(plays.filter(**filters).values_list(*fields, 'song_id', 'song__artist_id', 'song__album_id'))
 
-    return JsonResponse({'plays': plays, 'columns': columns})
+        song_id_location, song_id_exists = utils.substr_in_list_of_strs('song_name', columns)
+        artist_id_location, artist_id_exists = utils.substr_in_list_of_strs('artist_name', columns)
+        album_id_location, album_id_exists = utils.substr_in_list_of_strs('album_name', columns)
+
+
+        plays_list = []
+        for play in plays:
+            plays_list.append(list(play))
+
+            if song_id_exists:
+                plays_list[-1][song_id_location] = '''<a href="../../track/{}">{}</a>'''.format(play[-3], plays_list[-1][song_id_location])
+
+            if artist_id_exists:
+                plays_list[-1][artist_id_location] = '''<a href="../../artist/{}">{}</a>'''.format(play[-2], plays_list[-1][artist_id_location])
+
+            if album_id_exists:
+                plays_list[-1][album_id_location] = '''<a href="../../album/{}">{}</a>'''.format(play[-1], plays_list[-1][album_id_location])
+
+            plays_list[-1] = plays_list[-1][:-3]
+
+    return JsonResponse({'plays': plays_list, 'columns': columns})

@@ -55,3 +55,8 @@ def get_top_all_time(user, token):
         update_token_db(user, token)
     return top_all_time.get_all(user.email, token['access_token'])
 
+def substr_in_list_of_strs(sub_string, strings):
+    for n, item in enumerate(strings):
+        if sub_string in item:
+            return n, True
+    return False, False
