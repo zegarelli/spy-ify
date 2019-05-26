@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Artist, Album, Song, Play, UserToken
+from .models import Artist, Album, Song, Play, UserToken, Date
 from .forms import SignUpForm
 
 import spotify_api.spotipy.oauth2 as oauth
@@ -300,3 +300,11 @@ def free_query(request):
             plays_list[-1] = plays_list[-1][:-3]
 
     return JsonResponse({'plays': plays_list, 'columns': columns})
+
+def betsy(request):
+    context = {'user': request.user}
+    return render(request, 'betsy.html', context=context)
+
+def dates(request):
+    dates = list(Date.objects.all().values_list('day', 'text'))
+    return JsonResponse({'dates': dates})
