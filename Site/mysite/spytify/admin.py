@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from django.contrib import admin
 
-from .models import Song, Album, Play, Artist, UserToken, Date
+from .models import Song, Album, Play, Artist, UserToken
 
 
 class AlbumInLine(admin.TabularInline):
@@ -39,13 +39,9 @@ class AlbumAdmin(admin.ModelAdmin):
     search_fields = ['artist_name']
     inlines = [SongInLine]
 
-class DateAdmin(admin.ModelAdmin):
-    search_fields = ['date', 'text']
-
 admin.site.register(UserToken, UserTokenAdmin)
 admin.site.register(Song, SongAdmin)
 admin.site.register(Play, PlayAdmin)
 admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Album, AlbumAdmin)
-admin.site.register(Date, DateAdmin)
 

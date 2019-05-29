@@ -18,6 +18,7 @@ from django.contrib import admin
 
 urlpatterns = [
     path(r'', include('spytify.urls')),
+    path(r'', include('dateify.urls')),
     path(r'admin/', admin.site.urls),
     path(r'accounts/', include('django.contrib.auth.urls'))
 ]
