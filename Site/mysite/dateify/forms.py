@@ -1,4 +1,6 @@
 from django import forms
 
 class PostForm(forms.Form):
-    your_name = forms.CharField(label='Your name', max_length=100)
+    summary = forms.CharField(label='Post Summary', max_length=100)
+    text = forms.TextInput()
+    related_posts = forms.CheckboxSelectMultiple()

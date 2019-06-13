@@ -1,12 +1,26 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from .models import Post
-# Create your views here.
 
+from .forms import PostForm
 
 def post(request):
-    context = {'user': request.user}
-    return render(request, 'post.html', context=context)
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = PostForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect('/posts/')
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = PostForm()
+
+    return render(request, 'post.html', {'form': form})
 
 def posts(request):
     context = {'user': request.user}
