@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from .models import Date
+from .models import Post
 
 
-class DateAdmin(admin.ModelAdmin):
-    search_fields = ['date', 'text']
+class PostAdmin(admin.ModelAdmin):
+    search_fields = ['summary', 'user', 'text']
 
 
-admin.site.register(Date, DateAdmin)
+admin.site.register(Post, PostAdmin)
