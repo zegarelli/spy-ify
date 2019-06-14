@@ -94,3 +94,7 @@ auth.json
 
 # Pycharm
 .idea/
+
+*migrations/
+*csv/
+*.sqlite3
