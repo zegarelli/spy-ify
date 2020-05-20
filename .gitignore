@@ -98,3 +98,5 @@ auth.json
 *migrations/
 *csv/
 *.sqlite3
+.vscode/
+.venv/
