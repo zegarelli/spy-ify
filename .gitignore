@@ -100,3 +100,6 @@ auth.json
 *.sqlite3
 .vscode/
 .venv/
+venv/
+
+*.pem
