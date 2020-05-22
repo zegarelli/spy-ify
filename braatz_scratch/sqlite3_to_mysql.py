@@ -1,35 +1,25 @@
 import sqlite3
 import os
 import time
-import mysql.connector
 import json
+import psycopg2
 
 cursor = None
 mydb = None
 
 def mysql_connection():
     global cursor, mydb
-    """
-    Note: This requires .json with credentials to access jmoney.cash MySQL server.
-    Replace who with given credentials.
-    Request credentials from jmoney.cash admin.
-    """
-    who = "jax_auto"
-    with open('auth.json') as f:
-        cred = json.load(f)
     try:
-        mydb = mysql.connector.connect(
-            host=cred[who]['host'],
-            user=cred[who]['user'],
-            passwd=cred[who]['pass'],
-            database="spyify",
-        )
+        mydb = psycopg2.connect("dbname='{}' user='{}' host='{}' password='{}'".format(
+            os.environ['DB_NAME'],
+            os.environ['DB_USER'],
+            os.environ['DB_HOST'],
+            os.environ['DB_PASSWORD'],
 
-        if mydb.is_connected():
-            print('Connected to MySQL database. Thank you for choosing Jmoney.Cash')
+        ))
         cursor = mydb.cursor()
-    except EnvironmentError as e:
-        print(e)
+    except:
+        print("I am unable to connect to the database")
 
 def dumb_string_2_epoch(dumb_string):
     string = dumb_string.split(' ')
@@ -79,58 +69,22 @@ def table_time_conv(table):
 
 
 def transfer(table):
-    # Create Table
-    create_string = "CREATE TABLE " + table + ' ('
-    idx = 0
-    for col in data[table]['table_col']:
-
-        #  Datatype Replacements
-        if str.upper(data[table]['table_col'][col]['datatype']) == "":
-            datatype = 'VARCHAR(20)'
-        elif str.upper(data[table]['table_col'][col]['datatype']) == "VARCHAR(100)":
-            datatype = "VARCHAR(400)"
-        elif str.upper(data[table]['table_col'][col]['datatype']) == "REAL":
-            datatype = "FLOAT"
-        else:
-            datatype = str.upper(data[table]['table_col'][col]['datatype'])
-        if data[table]['table_col'][col]['name'] == "access_token":
-            datatype = "VARCHAR(300)"
-
-        data['spytify_play']['table_col']['time_stamp']['datatype'] = 'DATETIME'
-
-        #  Name Replacements
-        if data[table]['table_col'][col]['name'] == "key":
-            name = "key_"
-        else:
-            name = data[table]['table_col'][col]['name']
-
-        #  Character Set
-        if 'utf8' in data[table]['table_col'][col]:
-            character_set = ' CHARACTER SET utf8 COLLATE utf8_unicode_ci'
-        else:
-            character_set = ''
-
-        if idx != 0:
-            create_string += ', '
-        create_string += name + ' ' + datatype + character_set
-        idx += 1
-    create_string += ');'
-    print(create_string)
-    cursor.execute(create_string)
-    mydb.commit()
-
-    # Add Data
+    columns = data[table]['table_col']
+    column_names = []
+    for column in columns:
+        column_names.append(column)
+    column_str = '(' + ','.join(column_names) + ')'
     for row in data[table]['table_dat']:
-        add_string = r'INSERT INTO ' + table + r' VALUES ('
+        add_string = r'INSERT INTO ' + table + ' ' + column_str + r' VALUES ('
         idx = 0
         for col in row:
             empty = False
             if isinstance(col, bytes):
                 col = col.decode('utf-8')
             if isinstance(col, str):
-                if '"' in col:
-                    col = col.replace('"', r'\"')
-            if col == "":
+                if "'" in col:
+                    col = col.replace("'", r"''")
+            if col == "" or col == None or col == 'None':
                 col = "NULL"
                 empty = True
             if idx != 0:
@@ -138,13 +92,15 @@ def transfer(table):
             if empty:
                 add_string += str(col)
             else:
-                add_string += '"' + str(col) + '"'
+                add_string += "'" + str(col) + "'"
             idx += 1
         add_string += r');'
         try:
             cursor.execute(add_string)
             mydb.commit()
-        except:
+        except Exception as e:
+            cursor.execute('END TRANSACTION;')
+            print(e)
             print("FAILED: " + add_string)
 
 

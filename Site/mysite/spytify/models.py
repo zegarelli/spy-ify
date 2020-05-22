@@ -21,7 +21,7 @@ class Artist(models.Model):
     """
     artist_id = models.CharField(max_length=50, primary_key=True)
     artist_name = models.CharField(max_length=100, null=True, blank=True)
-    genres = models.CharField(max_length=100, null=True, blank=True)
+    genres = models.CharField(max_length=400, null=True, blank=True)
     followers = models.IntegerField(null=True, blank=True)
     artist_popularity = models.IntegerField(null=True, blank=True)
 
@@ -76,7 +76,7 @@ class Play(models.Model):
     Model representing a play instance of a song by a user
     """
     play_id = models.BigAutoField(primary_key=True)
-    time_stamp = models.CharField(max_length=50)
+    time_stamp = models.DateTimeField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     device = models.CharField(max_length=50, null=True, blank=True)
